@@ -113,6 +113,174 @@
       }
     },
 
+    // =========================================================================
+    // DATA ACCESS QUERIES (Instant Offline & Cloud Resilience)
+    // =========================================================================
+
+    async getSchool(schoolId) {
+      await this.init();
+      schoolId = parseInt(schoolId) || 1;
+      const schools = Object.values(dbState.schools || {});
+      const s = schools.find(x => x.id === schoolId || String(x.id) === String(schoolId));
+      if (!s) return null;
+      const plan = (dbState.subscription_plans || {})[s.plan_id] || {};
+      return Object.assign({}, s, {
+        plan_name: plan.name || 'Standard Tier',
+        student_limit: plan.student_limit || 1000,
+        monthly_price: plan.monthly_price || 129.0
+      });
+    },
+
+    async getSchoolsList() {
+      await this.init();
+      const schools = Object.values(dbState.schools || {});
+      return schools.map(s => {
+        const plan = (dbState.subscription_plans || {})[s.plan_id] || {};
+        return Object.assign({}, s, {
+          plan_name: plan.name || 'Standard Tier',
+          student_limit: plan.student_limit || 1000,
+          monthly_price: plan.monthly_price || 129.0
+        });
+      });
+    },
+
+    async getClasses(schoolId) {
+      await this.init();
+      schoolId = parseInt(schoolId) || 1;
+      const classes = Object.values(dbState.classes || {});
+      return classes.filter(c => c.school_id === schoolId || String(c.school_id) === String(schoolId));
+    },
+
+    async getStudents(schoolId) {
+      await this.init();
+      schoolId = parseInt(schoolId) || 1;
+      const students = Object.values(dbState.students || {}).filter(s => s.school_id === schoolId || String(s.school_id) === String(schoolId));
+      const classes = dbState.classes || {};
+      const parents = dbState.parents || {};
+
+      return students.map(s => {
+        const c = classes[String(s.class_id)] || {};
+        const p = parents[String(s.parent_id)] || {};
+        return Object.assign({}, s, {
+          class_name: c.name || 'Grade 10',
+          section: c.section || 'A',
+          parent_name: p.name || 'Guardian',
+          parent_phone: p.phone || s.emergency_phone || 'N/A'
+        });
+      });
+    },
+
+    async getTeachers(schoolId) {
+      await this.init();
+      schoolId = parseInt(schoolId) || 1;
+      const teachers = Object.values(dbState.teachers || {});
+      return teachers.filter(t => t.school_id === schoolId || String(t.school_id) === String(schoolId));
+    },
+
+    async getFees(schoolId) {
+      await this.init();
+      schoolId = parseInt(schoolId) || 1;
+      const fees = Object.values(dbState.fee_payments || {}).filter(f => f.school_id === schoolId || String(f.school_id) === String(schoolId));
+      const students = dbState.students || {};
+
+      return fees.map(f => {
+        const s = students[String(f.student_id)] || {};
+        return Object.assign({}, f, {
+          student_name: s.name || `Student #${f.student_id}`,
+          admission_no: s.admission_no || 'ADM-N/A'
+        });
+      });
+    },
+
+    async getNotices(schoolId) {
+      await this.init();
+      schoolId = parseInt(schoolId) || 1;
+      const notices = Object.values(dbState.notices || {});
+      return notices.filter(n => n.school_id === schoolId || String(n.school_id) === String(schoolId));
+    },
+
+    async getTimetables(schoolId, day) {
+      await this.init();
+      schoolId = parseInt(schoolId) || 1;
+      const timetables = Object.values(dbState.timetables || {}).filter(t => t.school_id === schoolId || String(t.school_id) === String(schoolId));
+      if (day) {
+        return timetables.filter(t => (t.day_of_week || '').toLowerCase() === day.toLowerCase());
+      }
+      return timetables;
+    },
+
+    async getLeaves(schoolId) {
+      await this.init();
+      schoolId = parseInt(schoolId) || 1;
+      const leaves = Object.values(dbState.leave_applications || {});
+      return leaves.filter(l => l.school_id === schoolId || String(l.school_id) === String(schoolId));
+    },
+
+    async getStudentProfile(studentId, schoolId) {
+      await this.init();
+      studentId = parseInt(studentId) || 1;
+      schoolId = parseInt(schoolId) || 1;
+
+      const students = Object.values(dbState.students || {});
+      const stu = students.find(s => s.id === studentId || String(s.id) === String(studentId)) || students[0];
+      if (!stu) return null;
+
+      const realSchoolId = stu.school_id || schoolId;
+      const school = await this.getSchool(realSchoolId);
+      const classes = dbState.classes || {};
+      const parents = dbState.parents || {};
+      const c = classes[String(stu.class_id)] || {};
+      const p = parents[String(stu.parent_id)] || {};
+
+      const siblings = students.filter(s => s.parent_id === stu.parent_id).map(sib => {
+        const sc = classes[String(sib.class_id)] || {};
+        return { id: sib.id, name: sib.name, class_name: sc.name || 'Class' };
+      });
+
+      return {
+        id: stu.id,
+        name: stu.name,
+        admission_no: stu.admission_no,
+        roll_no: stu.roll_no,
+        school_id: realSchoolId,
+        school_name: school ? school.name : "St. Xavier's International Academy",
+        school_code: school ? school.code : "SXIA",
+        class_name: c.name || "Grade 10",
+        section: c.section || "A",
+        parent_name: p.name || `${stu.name}'s Family`,
+        parent_phone: p.phone || stu.emergency_phone,
+        blood_group: stu.blood_group || "O+",
+        siblings: siblings
+      };
+    },
+
+    async getTeacherProfile(teacherId, schoolId) {
+      await this.init();
+      teacherId = parseInt(teacherId) || 1;
+      schoolId = parseInt(schoolId) || 1;
+
+      const teachers = Object.values(dbState.teachers || {});
+      const tch = teachers.find(t => t.id === teacherId || String(t.id) === String(teacherId)) || teachers[0];
+      if (!tch) return null;
+
+      const realSchoolId = tch.school_id || schoolId;
+      const school = await this.getSchool(realSchoolId);
+
+      return {
+        id: tch.id,
+        name: tch.name,
+        teacher_code: tch.teacher_code,
+        school_id: realSchoolId,
+        school_name: school ? school.name : "School",
+        school_code: school ? school.code : "SCH",
+        designation: tch.designation || "Faculty",
+        subject_specialization: tch.subject_specialization || "General",
+        qualification: tch.qualification || "M.Ed",
+        email: tch.email,
+        phone: tch.phone
+      };
+    },
+
     /**
      * Verify school code and access password
      */

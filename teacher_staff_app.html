@@ -297,44 +297,70 @@
     }
     if (urlParams.get('teacher_id')) {
       currentTeacherId = parseInt(urlParams.get('teacher_id'));
+    } else if (currentSchoolId === 2) {
+      currentTeacherId = 5; // Mr. Alan Turing
+    } else if (currentSchoolId === 3) {
+      currentTeacherId = 7; // Mrs. Hannah Abbott
+    } else {
+      currentTeacherId = 1; // Prof. Marcus Brody
     }
 
     async function loadTeacherProfile() {
+      let sc = null;
+      let teachers = null;
+      let classes = null;
+
       try {
         const scRes = await fetch(`${API_BASE}/api/school?school_id=${currentSchoolId}`);
-        if (scRes.ok) {
-          const sc = await scRes.json();
-          document.querySelector('.teacher-badge').innerText = sc.name;
-        }
+        if (scRes.ok) sc = await scRes.json();
+      } catch (e) {}
 
+      if (!sc && window.SchoolSync) {
+        sc = await window.SchoolSync.getSchool(currentSchoolId);
+      }
+      if (sc) {
+        document.querySelector('.teacher-badge').innerText = sc.name;
+      }
+
+      try {
         const tchRes = await fetch(`${API_BASE}/api/teachers?school_id=${currentSchoolId}`);
-        if (tchRes.ok) {
-          const teachers = await tchRes.json();
-          const target = teachers.find(t => t.id === currentTeacherId) || teachers[0];
-          if (target) {
-            currentTeacherId = target.id;
-            currentTeacherName = target.name;
-            document.querySelector('.teacher-meta h2').innerText = target.name;
-            document.querySelector('.teacher-meta p').innerText = `${target.designation || 'Faculty'} • ${target.subject_specialization}`;
-            const initials = target.name.split(' ').map(w => w[0]).filter(Boolean).slice(0, 2).join('');
-            document.querySelector('.teacher-avatar').innerText = initials || 'T';
-          }
-        }
+        if (tchRes.ok) teachers = await tchRes.json();
+      } catch (e) {}
 
-        const clsRes = await fetch(`${API_BASE}/api/classes?school_id=${currentSchoolId}`);
-        if (clsRes.ok) {
-          const classes = await clsRes.json();
-          const sel = document.getElementById('attClassSelect');
-          sel.innerHTML = '';
-          classes.forEach(c => {
-            const opt = document.createElement('option');
-            opt.value = c.id;
-            opt.text = `${c.name} - Section ${c.section} (${c.room || 'Main'})`;
-            sel.appendChild(opt);
-          });
+      if (!teachers && window.SchoolSync) {
+        teachers = await window.SchoolSync.getTeachers(currentSchoolId);
+      }
+
+      if (teachers && teachers.length > 0) {
+        const target = teachers.find(t => t.id === currentTeacherId) || teachers[0];
+        if (target) {
+          currentTeacherId = target.id;
+          currentTeacherName = target.name;
+          document.querySelector('.teacher-meta h2').innerText = target.name;
+          document.querySelector('.teacher-meta p').innerText = `${target.designation || 'Faculty'} • ${target.subject_specialization}`;
+          const initials = target.name.split(' ').map(w => w[0]).filter(Boolean).slice(0, 2).join('');
+          document.querySelector('.teacher-avatar').innerText = initials || 'T';
         }
-      } catch (e) {
-        console.error("Error loading teacher profile", e);
+      }
+
+      try {
+        const clsRes = await fetch(`${API_BASE}/api/classes?school_id=${currentSchoolId}`);
+        if (clsRes.ok) classes = await clsRes.json();
+      } catch (e) {}
+
+      if (!classes && window.SchoolSync) {
+        classes = await window.SchoolSync.getClasses(currentSchoolId);
+      }
+
+      if (classes) {
+        const sel = document.getElementById('attClassSelect');
+        sel.innerHTML = '';
+        classes.forEach(c => {
+          const opt = document.createElement('option');
+          opt.value = c.id;
+          opt.text = `${c.name} - Section ${c.section} (${c.room || 'Main'})`;
+          sel.appendChild(opt);
+        });
       }
     }
 
@@ -363,13 +389,20 @@
 
     async function loadClassAttendance() {
       const classId = document.getElementById('attClassSelect').value;
+      let data = null;
       try {
         const res = await fetch(`${API_BASE}/api/students?school_id=${currentSchoolId}&class_id=${classId}`);
-        studentsRoster = await res.json();
+        if (res.ok) data = await res.json();
+      } catch (e) {}
+
+      if (!data && window.SchoolSync) {
+        data = await window.SchoolSync.getStudents(currentSchoolId);
+      }
+
+      if (data) {
+        studentsRoster = data;
         renderAttendanceSheet();
         renderDirectory(studentsRoster);
-      } catch (e) {
-        console.error("Error loading roster", e);
       }
     }
 

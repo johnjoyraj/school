@@ -548,64 +548,86 @@
     }
 
     async function loadSchoolDetails() {
+      let s = null;
       try {
         const res = await fetch(`${API_BASE}/api/school?school_id=${currentSchoolId}`);
         if (res.ok) {
-          const s = await res.json();
-          document.getElementById('topSchoolId').innerText = s.id;
-          document.getElementById('topSchoolName').innerText = s.name;
-          const initials = s.name.split(' ').map(w => w[0]).filter(Boolean).slice(0, 2).join('').toUpperCase();
-          document.querySelector('.school-logo').innerText = initials || s.code || 'SCH';
-          if (s.admin_name) {
-            document.getElementById('topPrincipalName').innerText = `${s.admin_name} (Principal)`;
-          }
+          s = await res.json();
         }
-      } catch (e) {
-        console.error("Error loading school details", e);
+      } catch (e) {}
+
+      if (!s && window.SchoolSync) {
+        s = await window.SchoolSync.getSchool(currentSchoolId);
+      }
+
+      if (s) {
+        document.getElementById('topSchoolId').innerText = s.id;
+        document.getElementById('topSchoolName').innerText = s.name;
+        const initials = s.name.split(' ').map(w => w[0]).filter(Boolean).slice(0, 2).join('').toUpperCase();
+        document.querySelector('.school-logo').innerText = initials || s.code || 'SCH';
+        if (s.admin_name) {
+          document.getElementById('topPrincipalName').innerText = `${s.admin_name} (Principal)`;
+        }
       }
     }
 
     async function loadSchoolList() {
+      let list = null;
       try {
         const res = await fetch(`${API_BASE}/api/schools/list`);
         if (res.ok) {
-          const list = await res.json();
-          const sel = document.getElementById('tenantSelect');
-          sel.innerHTML = '';
-          list.forEach(sc => {
-            const opt = document.createElement('option');
-            opt.value = sc.id;
-            opt.text = `${sc.name} (${sc.code}) - ${sc.student_limit || 1000} Children`;
-            if (sc.id === currentSchoolId) opt.selected = true;
-            sel.appendChild(opt);
-          });
+          list = await res.json();
         }
-      } catch (e) {
-        console.error("Error loading schools list", e);
+      } catch (e) {}
+
+      if (!list && window.SchoolSync) {
+        list = await window.SchoolSync.getSchoolsList();
+      }
+
+      if (list && list.length > 0) {
+        const sel = document.getElementById('tenantSelect');
+        sel.innerHTML = '';
+        list.forEach(sc => {
+          const opt = document.createElement('option');
+          opt.value = sc.id;
+          opt.text = `${sc.name} (${sc.code}) - ${sc.student_limit || 1000} Children`;
+          if (sc.id === currentSchoolId) opt.selected = true;
+          sel.appendChild(opt);
+        });
       }
     }
 
     async function loadClasses() {
+      let classes = null;
       try {
         const res = await fetch(`${API_BASE}/api/classes?school_id=${currentSchoolId}`);
         if (res.ok) {
-          const classes = await res.json();
-          const sel = document.getElementById('stClass');
-          sel.innerHTML = '';
-          classes.forEach(c => {
-            const opt = document.createElement('option');
-            opt.value = c.id;
-            opt.text = `${c.name} - Section ${c.section} (${c.room || 'Main'})`;
-            sel.appendChild(opt);
-          });
+          classes = await res.json();
         }
-      } catch (e) {
-        console.error("Error loading classes", e);
+      } catch (e) {}
+
+      if (!classes && window.SchoolSync) {
+        classes = await window.SchoolSync.getClasses(currentSchoolId);
+      }
+
+      if (classes) {
+        const sel = document.getElementById('stClass');
+        sel.innerHTML = '';
+        classes.forEach(c => {
+          const opt = document.createElement('option');
+          opt.value = c.id;
+          opt.text = `${c.name} - Section ${c.section} (${c.room || 'Main'})`;
+          sel.appendChild(opt);
+        });
       }
     }
 
     function changeTenant() {
       currentSchoolId = parseInt(document.getElementById('tenantSelect').value);
+      try {
+        const newUrl = `${window.location.pathname}?school_id=${currentSchoolId}`;
+        window.history.pushState({ path: newUrl }, '', newUrl);
+      } catch (e) {}
       refreshAll();
     }
 
@@ -620,11 +642,20 @@
       loadLeaves();
     }
 
-    window.onload = async function() {
-      await loadSchoolList();
-      refreshAll();
-    };
-        const data = await res.json();
+    async function loadStudents() {
+      let data = null;
+      try {
+        const res = await fetch(`${API_BASE}/api/students?school_id=${currentSchoolId}`);
+        if (res.ok) {
+          data = await res.json();
+        }
+      } catch (e) {}
+
+      if (!data && window.SchoolSync) {
+        data = await window.SchoolSync.getStudents(currentSchoolId);
+      }
+
+      if (data) {
         const tbody = document.getElementById('students-table-body');
         const feeSelect = document.getElementById('feeStudent');
         tbody.innerHTML = '';
@@ -655,15 +686,23 @@
           opt.text = `${s.name} (${s.admission_no} - ${s.class_name})`;
           feeSelect.appendChild(opt);
         });
-      } catch (e) {
-        console.error("Error loading students", e);
       }
     }
 
     async function loadTeachers() {
+      let data = null;
       try {
         const res = await fetch(`${API_BASE}/api/teachers?school_id=${currentSchoolId}`);
-        const data = await res.json();
+        if (res.ok) {
+          data = await res.json();
+        }
+      } catch (e) {}
+
+      if (!data && window.SchoolSync) {
+        data = await window.SchoolSync.getTeachers(currentSchoolId);
+      }
+
+      if (data) {
         const tbody = document.getElementById('teachers-table-body');
         tbody.innerHTML = '';
         document.getElementById('kpi-teacher-count').innerText = data.length;
@@ -681,15 +720,23 @@
           `;
           tbody.appendChild(tr);
         });
-      } catch (e) {
-        console.error("Error loading teachers", e);
       }
     }
 
     async function loadFees() {
+      let data = null;
       try {
         const res = await fetch(`${API_BASE}/api/fees?school_id=${currentSchoolId}`);
-        const data = await res.json();
+        if (res.ok) {
+          data = await res.json();
+        }
+      } catch (e) {}
+
+      if (!data && window.SchoolSync) {
+        data = await window.SchoolSync.getFees(currentSchoolId);
+      }
+
+      if (data) {
         const tbody = document.getElementById('fees-table-body');
         tbody.innerHTML = '';
         let total = 0;
@@ -709,16 +756,24 @@
           tbody.appendChild(tr);
         });
         document.getElementById('kpi-fee-collected').innerText = `$${total.toLocaleString()}`;
-      } catch (e) {
-        console.error("Error loading fees", e);
       }
     }
 
     async function loadTimetable() {
       const day = document.getElementById('ttDaySelect').value;
+      let data = null;
       try {
         const res = await fetch(`${API_BASE}/api/timetables?school_id=${currentSchoolId}&day=${day}`);
-        const data = await res.json();
+        if (res.ok) {
+          data = await res.json();
+        }
+      } catch (e) {}
+
+      if (!data && window.SchoolSync) {
+        data = await window.SchoolSync.getTimetables(currentSchoolId, day);
+      }
+
+      if (data) {
         const container = document.getElementById('timetable-container');
         container.innerHTML = '';
 
@@ -733,15 +788,23 @@
           `;
           container.appendChild(div);
         });
-      } catch (e) {
-        console.error("Error loading timetable", e);
       }
     }
 
     async function loadNotices() {
+      let data = null;
       try {
         const res = await fetch(`${API_BASE}/api/notices?school_id=${currentSchoolId}`);
-        const data = await res.json();
+        if (res.ok) {
+          data = await res.json();
+        }
+      } catch (e) {}
+
+      if (!data && window.SchoolSync) {
+        data = await window.SchoolSync.getNotices(currentSchoolId);
+      }
+
+      if (data) {
         const container = document.getElementById('notices-container');
         container.innerHTML = '';
 
@@ -764,15 +827,23 @@
           `;
           container.appendChild(div);
         });
-      } catch (e) {
-        console.error("Error loading notices", e);
       }
     }
 
     async function loadLeaves() {
+      let data = null;
       try {
         const res = await fetch(`${API_BASE}/api/leaves?school_id=${currentSchoolId}`);
-        const data = await res.json();
+        if (res.ok) {
+          data = await res.json();
+        }
+      } catch (e) {}
+
+      if (!data && window.SchoolSync) {
+        data = await window.SchoolSync.getLeaves(currentSchoolId);
+      }
+
+      if (data) {
         const tbody = document.getElementById('leaves-table-body');
         tbody.innerHTML = '';
 
@@ -798,10 +869,13 @@
           `;
           tbody.appendChild(tr);
         });
-      } catch (e) {
-        console.error("Error loading leaves", e);
       }
     }
+
+    window.onload = async function() {
+      await loadSchoolList();
+      refreshAll();
+    };
 
     async function handleLeaveDecision(leaveId, decision) {
       try {

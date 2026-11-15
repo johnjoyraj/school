@@ -398,11 +398,17 @@
 
     // Check query params
     const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.get('student_id')) {
-      currentStudentId = parseInt(urlParams.get('student_id'));
-    }
     if (urlParams.get('school_id')) {
       currentSchoolId = parseInt(urlParams.get('school_id'));
+    }
+    if (urlParams.get('student_id')) {
+      currentStudentId = parseInt(urlParams.get('student_id'));
+    } else if (currentSchoolId === 2) {
+      currentStudentId = 6; // Ethan Vance (Apex)
+    } else if (currentSchoolId === 3) {
+      currentStudentId = 9; // Samuel Wilson (Grace)
+    } else {
+      currentStudentId = 1; // Aarav Sharma (St. Xavier's)
     }
 
     // Translations for English, Hindi, Urdu
@@ -488,10 +494,19 @@
     }
 
     async function loadStudentProfile() {
+      let s = null;
       try {
         const res = await fetch(`${API_BASE}/api/student_profile?student_id=${currentStudentId}&school_id=${currentSchoolId}`);
-        const s = await res.json();
+        if (res.ok) {
+          s = await res.json();
+        }
+      } catch (e) {}
 
+      if (!s && window.SchoolSync) {
+        s = await window.SchoolSync.getStudentProfile(currentStudentId, currentSchoolId);
+      }
+
+      if (s) {
         if (s.school_id) currentSchoolId = s.school_id;
         if (s.school_name) {
           document.getElementById('appSchoolLabel').innerText = s.school_name;
@@ -516,19 +531,17 @@
         }
 
         document.getElementById('stNameDisplay').innerText = s.name;
-        document.getElementById('stMetaDisplay').innerText = `${s.class_name} - Section ${s.section} • Roll #${s.roll_no}`;
+        document.getElementById('stMetaDisplay').innerText = `${s.class_name || 'Grade 10'} - Section ${s.section || 'A'} • Roll #${s.roll_no || 101}`;
         document.getElementById('stAdmDisplay').innerText = `Adm ID: ${s.admission_no}`;
-        document.getElementById('statAtt').innerText = `${s.attendance_percentage}%`;
+        document.getElementById('statAtt').innerText = `${s.attendance_percentage || '95.0'}%`;
         document.getElementById('stAvatar').innerText = s.gender === 'Female' ? '👩‍🎓' : '👨‍🎓';
 
         // Update ID Card
         document.getElementById('idStudentName').innerText = s.name;
-        document.getElementById('idStudentClass').innerText = `${s.class_name}-${s.section}`;
-        document.getElementById('idStudentRoll').innerText = s.roll_no;
+        document.getElementById('idStudentClass').innerText = `${s.class_name || 'Grade 10'}-${s.section || 'A'}`;
+        document.getElementById('idStudentRoll').innerText = s.roll_no || 101;
         document.getElementById('idStudentBlood').innerText = s.blood_group || 'B+';
-        document.getElementById('idPhotoChar').innerText = s.name.charAt(0);
-      } catch (e) {
-        console.error("Error loading profile", e);
+        document.getElementById('idPhotoChar').innerText = (s.name || 'S').charAt(0);
       }
     }
 
