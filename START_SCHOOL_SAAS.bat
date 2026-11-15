@@ -7,7 +7,7 @@ echo    STARTING MULTI-SCHOOL MANAGEMENT SAAS PLATFORM (PORT 8088)
 echo ======================================================================
 echo  Tenant 1: St. Xavier's International Academy (Enterprise)
 echo  Tenant 2: Apex Global High School (Professional)
-echo  Tenant 3: Grace Model Public School (Starter)
+echo  Tenant 3: Grace Mission School (GMS) - 580 Enrolled Students
 echo ======================================================================
 
 start "" "http://localhost:8088/index.html"
