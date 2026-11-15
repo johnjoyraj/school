@@ -546,95 +546,117 @@
     }
 
     async function loadAcademicHub() {
+      let subjects = null;
       try {
         const res = await fetch(`${API_BASE}/api/academic_hub?student_id=${currentStudentId}&school_id=${currentSchoolId}`);
-        const subjects = await res.json();
-        const container = document.getElementById('academic-subjects-list');
-        container.innerHTML = '';
-
-        subjects.forEach(sub => {
-          const div = document.createElement('div');
-          div.className = 'subj-card';
-          const chCount = sub.chapters ? sub.chapters.length : 0;
-          div.innerHTML = `
-            <div class="subj-info">
-              <h4>${sub.name}</h4>
-              <p>👨‍🏫 ${sub.teacher_name || 'Faculty'} • ${chCount} Chapters Syllabus</p>
-            </div>
-            <span style="font-size: 0.8rem; color: var(--primary); font-weight: 700;">Open →</span>
-          `;
-          container.appendChild(div);
-        });
+        if (res.ok) subjects = await res.json();
       } catch (e) {
-        console.error("Error loading academic hub", e);
+        console.error("Error loading academic hub from API", e);
       }
+
+      if (!subjects && window.SchoolSync) {
+        const seed = await window.SchoolSync.fetchLocalSeed();
+        subjects = (seed.subjects || []).filter(s => s.school_id === currentSchoolId);
+      }
+      if (!subjects) subjects = [];
+
+      const container = document.getElementById('academic-subjects-list');
+      container.innerHTML = '';
+
+      subjects.forEach(sub => {
+        const div = document.createElement('div');
+        div.className = 'subj-card';
+        const chCount = sub.chapters ? sub.chapters.length : 0;
+        div.innerHTML = `
+          <div class="subj-info">
+            <h4>${sub.name}</h4>
+            <p>👨‍🏫 ${sub.teacher_name || 'Faculty'} • ${chCount} Chapters Syllabus</p>
+          </div>
+          <span style="font-size: 0.8rem; color: var(--primary); font-weight: 700;">Open →</span>
+        `;
+        container.appendChild(div);
+      });
     }
 
     async function loadHomework() {
+      let hwList = null;
       try {
         const res = await fetch(`${API_BASE}/api/homework?school_id=${currentSchoolId}`);
-        const hwList = await res.json();
-
-        const homeContainer = document.getElementById('home-hw-list');
-        const fullContainer = document.getElementById('full-hw-list');
-        homeContainer.innerHTML = '';
-        fullContainer.innerHTML = '';
-
-        hwList.forEach((hw, idx) => {
-          const card = document.createElement('div');
-          card.className = 'hw-card';
-          card.innerHTML = `
-            <div class="hw-top">
-              <span class="hw-badge hw-due">Due: ${hw.due_date}</span>
-              <span style="font-weight:700; color:var(--primary); font-size:0.78rem;">${hw.points} pts</span>
-            </div>
-            <div class="hw-title">${hw.title}</div>
-            <div class="hw-desc">${hw.description}</div>
-            <div class="hw-foot">
-              <span>👨‍🏫 ${hw.teacher_name}</span>
-              <button onclick="openSubmitModal(${hw.id}, '${hw.title.replace(/'/g, "\\'")}')" style="background:var(--primary); color:white; border:none; padding:4px 10px; border-radius:6px; font-size:0.75rem; cursor:pointer;">
-                Submit 📤
-              </button>
-            </div>
-          `;
-
-          if (idx < 2) {
-            homeContainer.appendChild(card.cloneNode(true));
-          }
-          fullContainer.appendChild(card);
-        });
+        if (res.ok) hwList = await res.json();
       } catch (e) {
-        console.error("Error loading homework", e);
+        console.error("Error loading homework from API", e);
       }
+
+      if (!hwList && window.SchoolSync) {
+        const seed = await window.SchoolSync.fetchLocalSeed();
+        hwList = (seed.assignments || []).filter(a => a.school_id === currentSchoolId);
+      }
+      if (!hwList) hwList = [];
+
+      const homeContainer = document.getElementById('home-hw-list');
+      const fullContainer = document.getElementById('full-hw-list');
+      homeContainer.innerHTML = '';
+      fullContainer.innerHTML = '';
+
+      hwList.forEach((hw, idx) => {
+        const card = document.createElement('div');
+        card.className = 'hw-card';
+        card.innerHTML = `
+          <div class="hw-top">
+            <span class="hw-badge hw-due">Due: ${hw.due_date || 'Ongoing'}</span>
+            <span style="font-weight:700; color:var(--primary); font-size:0.78rem;">${hw.points || 100} pts</span>
+          </div>
+          <div class="hw-title">${hw.title}</div>
+          <div class="hw-desc">${hw.description || 'Complete assigned classwork exercises.'}</div>
+          <div class="hw-foot">
+            <span>👨‍🏫 ${hw.teacher_name || 'Faculty'}</span>
+            <button onclick="openSubmitModal(${hw.id}, '${(hw.title || '').replace(/'/g, "\\'")}')" style="background:var(--primary); color:white; border:none; padding:4px 10px; border-radius:6px; font-size:0.75rem; cursor:pointer;">
+              Submit 📤
+            </button>
+          </div>
+        `;
+
+        if (idx < 2) {
+          homeContainer.appendChild(card.cloneNode(true));
+        }
+        fullContainer.appendChild(card);
+      });
     }
 
     async function loadNotices() {
+      let notices = null;
       try {
         const res = await fetch(`${API_BASE}/api/notices?school_id=${currentSchoolId}`);
-        const notices = await res.json();
-        const container = document.getElementById('full-notices-list');
-        container.innerHTML = '';
-
-        notices.forEach(n => {
-          const div = document.createElement('div');
-          div.style.background = 'white';
-          div.style.border = '1px solid var(--border)';
-          div.style.borderRadius = '12px';
-          div.style.padding = '12px';
-          div.style.marginBottom = '10px';
-          div.innerHTML = `
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
-              <strong style="font-size:0.88rem; color:#1e293b;">${n.title}</strong>
-              <span style="font-size:0.7rem; background:#fee2e2; color:#b91c1c; padding:2px 6px; border-radius:4px;">${n.priority}</span>
-            </div>
-            <p style="font-size:0.78rem; color:#475569;">${n.content}</p>
-            <div style="font-size:0.72rem; color:var(--text-muted); margin-top:6px;">${n.date} • ${n.author}</div>
-          `;
-          container.appendChild(div);
-        });
+        if (res.ok) notices = await res.json();
       } catch (e) {
-        console.error("Error loading notices", e);
+        console.error("Error loading notices from API", e);
       }
+
+      if (!notices && window.SchoolSync) {
+        notices = await window.SchoolSync.getNotices(currentSchoolId);
+      }
+      if (!notices) notices = [];
+
+      const container = document.getElementById('full-notices-list');
+      container.innerHTML = '';
+
+      notices.forEach(n => {
+        const div = document.createElement('div');
+        div.style.background = 'white';
+        div.style.border = '1px solid var(--border)';
+        div.style.borderRadius = '12px';
+        div.style.padding = '12px';
+        div.style.marginBottom = '10px';
+        div.innerHTML = `
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+            <strong style="font-size:0.88rem; color:#1e293b;">${n.title}</strong>
+            <span style="font-size:0.7rem; background:#fee2e2; color:#b91c1c; padding:2px 6px; border-radius:4px;">${n.priority || 'Normal'}</span>
+          </div>
+          <p style="font-size:0.78rem; color:#475569;">${n.content}</p>
+          <div style="font-size:0.72rem; color:var(--text-muted); margin-top:6px;">${n.date || 'Notice'} • ${n.author || 'School Administration'}</div>
+        `;
+        container.appendChild(div);
+      });
     }
 
     function openSubmitModal(id, title) {

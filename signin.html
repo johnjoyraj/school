@@ -120,7 +120,7 @@
       <form onsubmit="verifySchool(event)">
         <div class="form-group">
           <label>School Institution Code *</label>
-          <input type="text" id="inputSchoolCode" class="form-control" required placeholder="e.g. SXIA, APEX, GMPS" style="text-transform:uppercase; font-weight:bold; letter-spacing:1px;" value="SXIA">
+          <input type="text" id="inputSchoolCode" class="form-control" required placeholder="e.g. SXIA, APEX, GMS" style="text-transform:uppercase; font-weight:bold; letter-spacing:1px;" value="SXIA">
         </div>
         <div class="form-group">
           <label>School Access Password *</label>
@@ -190,13 +190,13 @@
         <!-- School 3 -->
         <div class="demo-school-row">
           <div>
-            <div class="demo-school-name">Grace Model School (GMPS)</div>
-            <div style="font-size:0.7rem; color:#64748b;">Code: GMPS</div>
+            <div class="demo-school-name">Grace Mission School (GMS)</div>
+            <div style="font-size:0.7rem; color:#64748b;">Code: GMS • 580 Students • Gorakhpur Campuses</div>
           </div>
           <div class="demo-btns">
-            <button class="btn-demo" onclick="quickLogin(3, 'GMPS', 'principal', 'PRIN-GMPS-01', 'admin123')">Principal</button>
-            <button class="btn-demo" onclick="quickLogin(3, 'GMPS', 'teacher', 'TCH-GMPS-01', 'teach123')">Teacher</button>
-            <button class="btn-demo" onclick="quickLogin(3, 'GMPS', 'student', 'ADM-GMPS-01', 'student123')">Student</button>
+            <button class="btn-demo" onclick="quickLogin(3, 'GMS', 'principal', 'PRIN-GMS-01', 'admin123')">Principal</button>
+            <button class="btn-demo" onclick="quickLogin(3, 'GMS', 'teacher', 'T01', '1234')">Teacher</button>
+            <button class="btn-demo" onclick="quickLogin(3, 'GMS', 'student', '4', 'student123')">Student (Piyush)</button>
           </div>
         </div>
       </div>
@@ -301,17 +301,23 @@
       } else if (role === 'teacher') {
         document.getElementById('tabTeacher').classList.add('active');
         idLabel.innerText = "Teacher ID / Faculty Code *";
-        idInput.placeholder = `e.g. TCH-${currentVerifiedSchool.code}-01`;
-        idInput.value = `TCH-${currentVerifiedSchool.code}-01`;
-        pwdInput.value = "teach123";
+        if (currentVerifiedSchool.code === 'GMS' || currentVerifiedSchool.code === 'GMPS') {
+          idInput.placeholder = "e.g. T01, T02, T03";
+          idInput.value = "T01";
+          pwdInput.value = "1234";
+        } else {
+          idInput.placeholder = `e.g. TCH-${currentVerifiedSchool.code}-01`;
+          idInput.value = `TCH-${currentVerifiedSchool.code}-01`;
+          pwdInput.value = "teach123";
+        }
         submitBtn.innerText = "Sign In to Teacher Mobile App";
         submitBtn.style.background = "#0f766e";
       } else if (role === 'student') {
         document.getElementById('tabStudent').classList.add('active');
-        idLabel.innerText = "Student Admission No / Roll No *";
+        idLabel.innerText = "Student Admission No / Roll No / SID *";
         if (currentVerifiedSchool.code === 'SXIA') idInput.value = "ADM-2024-001";
         else if (currentVerifiedSchool.code === 'APEX') idInput.value = "ADM-APEX-101";
-        else idInput.value = "ADM-GMPS-01";
+        else idInput.value = "4"; // Piyush Kumar (Class VI-A, GMS)
         pwdInput.value = "student123";
         submitBtn.innerText = "Sign In to Student & Parent App";
         submitBtn.style.background = "#4f46e5";

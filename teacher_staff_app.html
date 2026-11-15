@@ -300,7 +300,7 @@
     } else if (currentSchoolId === 2) {
       currentTeacherId = 5; // Mr. Alan Turing
     } else if (currentSchoolId === 3) {
-      currentTeacherId = 7; // Mrs. Hannah Abbott
+      currentTeacherId = 10; // Mrs. Sunita Sharma (GMS)
     } else {
       currentTeacherId = 1; // Prof. Marcus Brody
     }
@@ -532,7 +532,7 @@
       const payload = {
         class_id: 1,
         subject_id: 1,
-        teacher_name: "Prof. Marcus Brody",
+        teacher_name: currentTeacherName || "Faculty",
         title: document.getElementById('hwTitle').value,
         description: document.getElementById('hwDesc').value,
         due_date: document.getElementById('hwDue').value,
@@ -557,8 +557,8 @@
     async function submitLeave(e) {
       e.preventDefault();
       const payload = {
-        teacher_id: 1,
-        teacher_name: "Prof. Marcus Brody",
+        teacher_id: currentTeacherId || 1,
+        teacher_name: currentTeacherName || "Faculty",
         leave_type: document.getElementById('leaveType').value,
         start_date: document.getElementById('leaveStart').value,
         end_date: document.getElementById('leaveEnd').value,
