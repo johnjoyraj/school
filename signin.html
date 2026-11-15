@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EduSaaS - School & Role Sign-In Portal</title>
+  <script src="school-sync.js"></script>
+  <style>
+    :root {
+      --primary: #1e3a8a;
+      --primary-hover: #1e40af;
+      --secondary: #0284c7;
+      --accent: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --bg: #0f172a;
+      --card-bg: #ffffff;
+      --border: #e2e8f0;
+      --text: #0f172a;
+      --text-muted: #64748b;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; }
+    body { background: var(--bg); color: var(--text); min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; }
+
+    .brand-header { text-align: center; margin-bottom: 24px; color: white; }
+    .brand-header h1 { font-size: 1.8rem; font-weight: 800; letter-spacing: -0.5px; }
+    .brand-header p { color: #94a3b8; font-size: 0.95rem; margin-top: 4px; }
+
+    /* Auth Box */
+    .auth-container {
+      background: white; border-radius: 20px; max-width: 500px; width: 100%;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.5); overflow: hidden; position: relative;
+    }
+
+    /* School Header Card (Revealed after school code) */
+    .school-banner {
+      background: linear-gradient(135deg, #1e3a8a, #0284c7); color: white;
+      padding: 20px; text-align: center; display: none; position: relative;
+    }
+    .school-banner h3 { font-size: 1.25rem; font-weight: 700; }
+    .school-banner p { font-size: 0.82rem; opacity: 0.9; margin-top: 2px; }
+    .btn-change-school {
+      position: absolute; top: 12px; right: 12px; background: rgba(255,255,255,0.2);
+      border: none; color: white; padding: 4px 8px; border-radius: 6px; font-size: 0.72rem; cursor: pointer;
+    }
+
+    .auth-body { padding: 30px; }
+
+    /* Role Tabs */
+    .role-tabs {
+      display: flex; gap: 6px; background: #f1f5f9; padding: 5px;
+      border-radius: 10px; margin-bottom: 24px;
+    }
+    .role-tab {
+      flex: 1; background: transparent; border: none; padding: 10px 4px;
+      border-radius: 8px; font-weight: 600; font-size: 0.85rem; color: #64748b;
+      cursor: pointer; text-align: center; transition: all 0.2s;
+    }
+    .role-tab.active { background: white; color: var(--primary); box-shadow: 0 2px 6px rgba(0,0,0,0.06); }
+
+    .form-group { margin-bottom: 16px; }
+    .form-group label { display: block; font-size: 0.82rem; font-weight: 600; color: #475569; margin-bottom: 6px; }
+    .form-control {
+      width: 100%; border: 1px solid var(--border); padding: 11px 14px;
+      border-radius: 8px; font-size: 0.9rem; background: #f8fafc;
+    }
+    .form-control:focus { outline: none; border-color: var(--secondary); background: white; }
+
+    .btn-submit {
+      width: 100%; background: var(--primary); color: white; border: none;
+      padding: 12px; border-radius: 8px; font-weight: 700; font-size: 0.95rem;
+      cursor: pointer; transition: background 0.2s; margin-top: 8px;
+    }
+    .btn-submit:hover { background: var(--primary-hover); }
+
+    /* Demo Quick-Click Section */
+    .demo-section {
+      background: #f8fafc; border-top: 1px solid var(--border); padding: 20px 30px;
+    }
+    .demo-title { font-size: 0.78rem; text-transform: uppercase; font-weight: 700; color: #64748b; margin-bottom: 10px; }
+    .demo-schools { display: flex; flex-direction: column; gap: 8px; }
+    .demo-school-row {
+      background: white; border: 1px solid var(--border); border-radius: 8px;
+      padding: 8px 12px; display: flex; justify-content: space-between; align-items: center;
+    }
+    .demo-school-name { font-size: 0.82rem; font-weight: 600; color: #1e293b; }
+    .demo-btns { display: flex; gap: 4px; }
+    .btn-demo {
+      background: #f1f5f9; border: 1px solid var(--border); color: #334155;
+      padding: 3px 8px; border-radius: 4px; font-size: 0.72rem; cursor: pointer; font-weight: 600;
+    }
+    .btn-demo:hover { background: #e2e8f0; color: #0f172a; }
+
+    .foot-links { text-align: center; margin-top: 20px; font-size: 0.85rem; color: #94a3b8; }
+    .foot-links a { color: #38bdf8; text-decoration: none; font-weight: 600; }
+    .foot-links a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+
+  <div class="brand-header">
+    <h1>🎓 EduSaaS School Portal</h1>
+    <p>Sign in to your educational institution's web & mobile workspace</p>
+  </div>
+
+  <div class="auth-container">
+
+    <!-- School Context Banner -->
+    <div id="schoolBanner" class="school-banner">
+      <button class="btn-change-school" onclick="resetSchoolContext()">Change School ↺</button>
+      <h3 id="bannerSchoolName">St. Xavier's International Academy</h3>
+      <p id="bannerSchoolMeta">School Code: <strong>SXIA</strong> • Plan: Enterprise Campus</p>
+    </div>
+
+    <!-- Step 1: School Code & Password Gatekeeper -->
+    <div id="stepSchoolGate" class="auth-body">
+      <h2 style="font-size:1.15rem; color:#1e293b; margin-bottom:6px;">🏫 1. Enter Your School Code</h2>
+      <p style="font-size:0.84rem; color:#64748b; margin-bottom:18px;">Each educational institution has a unique code and authentication password.</p>
+
+      <form onsubmit="verifySchool(event)">
+        <div class="form-group">
+          <label>School Institution Code *</label>
+          <input type="text" id="inputSchoolCode" class="form-control" required placeholder="e.g. SXIA, APEX, GMPS" style="text-transform:uppercase; font-weight:bold; letter-spacing:1px;" value="SXIA">
+        </div>
+        <div class="form-group">
+          <label>School Access Password *</label>
+          <input type="password" id="inputSchoolPwd" class="form-control" required placeholder="Enter school password" value="school123">
+        </div>
+        <button type="submit" class="btn-submit">
+          Verify School & Proceed ➔
+        </button>
+      </form>
+    </div>
+
+    <!-- Step 2: Role Sign In (Principal, Teacher, Student) -->
+    <div id="stepRoleLogin" class="auth-body" style="display:none;">
+      <!-- Role Tabs -->
+      <div class="role-tabs">
+        <button class="role-tab active" id="tabPrincipal" onclick="switchRole('principal')">🏫 Principal</button>
+        <button class="role-tab" id="tabTeacher" onclick="switchRole('teacher')">👨‍🏫 Teacher</button>
+        <button class="role-tab" id="tabStudent" onclick="switchRole('student')">👨‍🎓 Student</button>
+      </div>
+
+      <form onsubmit="submitRoleLogin(event)">
+        <!-- Dynamic Login ID Label -->
+        <div class="form-group">
+          <label id="lblIdNumber">Principal ID Number / Email *</label>
+          <input type="text" id="loginIdInput" class="form-control" required placeholder="Enter ID number">
+        </div>
+        <div class="form-group">
+          <label>Account Password *</label>
+          <input type="password" id="loginPwdInput" class="form-control" required placeholder="Enter password">
+        </div>
+        <button type="submit" class="btn-submit" id="btnLoginSubmit">
+          Sign In to Principal Dashboard
+        </button>
+      </form>
+    </div>
+
+    <!-- Demo 1-Click Credentials for all 3 Schools -->
+    <div class="demo-section">
+      <div class="demo-title">⚡ 1-Click Quick Demo Sign In</div>
+      <div class="demo-schools">
+        <!-- School 1 -->
+        <div class="demo-school-row">
+          <div>
+            <div class="demo-school-name">St. Xavier's Academy (SXIA)</div>
+            <div style="font-size:0.7rem; color:#64748b;">Code: SXIA</div>
+          </div>
+          <div class="demo-btns">
+            <button class="btn-demo" onclick="quickLogin(1, 'SXIA', 'principal', 'PRIN-SXIA-01', 'admin123')">Principal</button>
+            <button class="btn-demo" onclick="quickLogin(1, 'SXIA', 'teacher', 'TCH-SXIA-01', 'teach123')">Teacher</button>
+            <button class="btn-demo" onclick="quickLogin(1, 'SXIA', 'student', 'ADM-2024-001', 'student123')">Student</button>
+          </div>
+        </div>
+
+        <!-- School 2 -->
+        <div class="demo-school-row">
+          <div>
+            <div class="demo-school-name">Apex Global High (APEX)</div>
+            <div style="font-size:0.7rem; color:#64748b;">Code: APEX</div>
+          </div>
+          <div class="demo-btns">
+            <button class="btn-demo" onclick="quickLogin(2, 'APEX', 'principal', 'PRIN-APEX-01', 'admin123')">Principal</button>
+            <button class="btn-demo" onclick="quickLogin(2, 'APEX', 'teacher', 'TCH-APEX-01', 'teach123')">Teacher</button>
+            <button class="btn-demo" onclick="quickLogin(2, 'APEX', 'student', 'ADM-APEX-101', 'student123')">Student</button>
+          </div>
+        </div>
+
+        <!-- School 3 -->
+        <div class="demo-school-row">
+          <div>
+            <div class="demo-school-name">Grace Model School (GMPS)</div>
+            <div style="font-size:0.7rem; color:#64748b;">Code: GMPS</div>
+          </div>
+          <div class="demo-btns">
+            <button class="btn-demo" onclick="quickLogin(3, 'GMPS', 'principal', 'PRIN-GMPS-01', 'admin123')">Principal</button>
+            <button class="btn-demo" onclick="quickLogin(3, 'GMPS', 'teacher', 'TCH-GMPS-01', 'teach123')">Teacher</button>
+            <button class="btn-demo" onclick="quickLogin(3, 'GMPS', 'student', 'ADM-GMPS-01', 'student123')">Student</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="foot-links">
+    <div>Looking to register your school? <a href="apply_school.html">Apply for New School Registration ➔</a></div>
+    <div style="margin-top:6px;"><a href="index.html">← Return to Master Architecture Suite</a></div>
+  </div>
+
+  <script>
+    const API_BASE = window.location.origin.includes('8088') ? window.location.origin : 'http://localhost:8088';
+    let currentVerifiedSchool = null;
+    let currentRole = 'principal';
+
+    // Check query params (e.g. ?school_code=SXIA)
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('school_code')) {
+      document.getElementById('inputSchoolCode').value = urlParams.get('school_code');
+    }
+
+    async function verifySchool(e) {
+      if (e) e.preventDefault();
+      const code = document.getElementById('inputSchoolCode').value.trim().toUpperCase();
+      const pwd = document.getElementById('inputSchoolPwd').value.trim();
+
+      // 1. Try local server first if available
+      try {
+        const res = await fetch(`${API_BASE}/api/auth/school-verify`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ code: code, password: pwd })
+        });
+        if (res.ok) {
+          const data = await res.json();
+          if (data.success) {
+            currentVerifiedSchool = data.school;
+            showRoleLoginScreen();
+            return;
+          } else {
+            alert(data.message || "Invalid School Code or Password.");
+            return;
+          }
+        }
+      } catch (err) {
+        // Fallback to SchoolSync (Firebase Cloud / Encrypted Cache)
+      }
+
+      // 2. Use SchoolSync (Firebase Cloud / Offline / GitHub Pages)
+      if (window.SchoolSync) {
+        const syncRes = await window.SchoolSync.verifySchool(code, pwd);
+        if (syncRes.success) {
+          currentVerifiedSchool = syncRes.school;
+          showRoleLoginScreen();
+          return;
+        } else {
+          alert(syncRes.message || "Invalid School Code or Password.");
+          return;
+        }
+      }
+
+      alert("Unable to verify school credentials.");
+    }
+
+    function showRoleLoginScreen() {
+      document.getElementById('stepSchoolGate').style.display = 'none';
+      document.getElementById('schoolBanner').style.display = 'block';
+      document.getElementById('stepRoleLogin').style.display = 'block';
+
+      document.getElementById('bannerSchoolName').innerText = currentVerifiedSchool.name;
+      document.getElementById('bannerSchoolMeta').innerHTML = `School Code: <strong>${currentVerifiedSchool.code}</strong> • Capacity Limit: ${currentVerifiedSchool.student_limit || 1000} Students`;
+
+      switchRole('principal');
+    }
+
+    function resetSchoolContext() {
+      currentVerifiedSchool = null;
+      document.getElementById('stepSchoolGate').style.display = 'block';
+      document.getElementById('schoolBanner').style.display = 'none';
+      document.getElementById('stepRoleLogin').style.display = 'none';
+    }
+
+    function switchRole(role) {
+      currentRole = role;
+      document.querySelectorAll('.role-tab').forEach(t => t.classList.remove('active'));
+
+      const idInput = document.getElementById('loginIdInput');
+      const pwdInput = document.getElementById('loginPwdInput');
+      const submitBtn = document.getElementById('btnLoginSubmit');
+      const idLabel = document.getElementById('lblIdNumber');
+
+      if (role === 'principal') {
+        document.getElementById('tabPrincipal').classList.add('active');
+        idLabel.innerText = "Principal ID Number / Email *";
+        idInput.placeholder = `e.g. PRIN-${currentVerifiedSchool.code}-01`;
+        idInput.value = `PRIN-${currentVerifiedSchool.code}-01`;
+        pwdInput.value = "admin123";
+        submitBtn.innerText = "Sign In to School Administration Portal";
+        submitBtn.style.background = "#1e3a8a";
+      } else if (role === 'teacher') {
+        document.getElementById('tabTeacher').classList.add('active');
+        idLabel.innerText = "Teacher ID / Faculty Code *";
+        idInput.placeholder = `e.g. TCH-${currentVerifiedSchool.code}-01`;
+        idInput.value = `TCH-${currentVerifiedSchool.code}-01`;
+        pwdInput.value = "teach123";
+        submitBtn.innerText = "Sign In to Teacher Mobile App";
+        submitBtn.style.background = "#0f766e";
+      } else if (role === 'student') {
+        document.getElementById('tabStudent').classList.add('active');
+        idLabel.innerText = "Student Admission No / Roll No *";
+        if (currentVerifiedSchool.code === 'SXIA') idInput.value = "ADM-2024-001";
+        else if (currentVerifiedSchool.code === 'APEX') idInput.value = "ADM-APEX-101";
+        else idInput.value = "ADM-GMPS-01";
+        pwdInput.value = "student123";
+        submitBtn.innerText = "Sign In to Student & Parent App";
+        submitBtn.style.background = "#4f46e5";
+      }
+    }
+
+    async function submitRoleLogin(e) {
+      e.preventDefault();
+      const loginId = document.getElementById('loginIdInput').value.trim();
+      const password = document.getElementById('loginPwdInput').value.trim();
+
+      // 1. Try local server
+      try {
+        const res = await fetch(`${API_BASE}/api/auth/login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            school_id: currentVerifiedSchool.id,
+            role: currentRole,
+            login_id: loginId,
+            password: password
+          })
+        });
+        if (res.ok) {
+          const data = await res.json();
+          if (data.success && data.redirect) {
+            window.location.href = data.redirect;
+            return;
+          } else {
+            alert(data.message || "Invalid credentials.");
+            return;
+          }
+        }
+      } catch (err) {
+        // Fallback to SchoolSync
+      }
+
+      // 2. Fallback to SchoolSync
+      if (window.SchoolSync) {
+        const auth = await window.SchoolSync.login(currentVerifiedSchool.id, currentRole, loginId, password);
+        if (auth.success && auth.redirect_url) {
+          window.location.href = auth.redirect_url;
+          return;
+        } else {
+          alert(auth.message || "Invalid credentials.");
+          return;
+        }
+      }
+
+      alert("Authentication error.");
+    }
+
+    // 1-Click Instant Demo Authentication
+    async function quickLogin(schoolId, schoolCode, role, loginId, pwd) {
+      document.getElementById('inputSchoolCode').value = schoolCode;
+      document.getElementById('inputSchoolPwd').value = 'school123';
+      
+      // Auto verify school
+      let verified = false;
+      try {
+        const res = await fetch(`${API_BASE}/api/auth/school-verify`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ code: schoolCode, password: 'school123' })
+        });
+        if (res.ok) {
+          const data = await res.json();
+          if (data.success) {
+            currentVerifiedSchool = data.school;
+            verified = true;
+          }
+        }
+      } catch (e) {}
+
+      if (!verified && window.SchoolSync) {
+        const sRes = await window.SchoolSync.verifySchool(schoolCode, 'school123');
+        if (sRes.success) {
+          currentVerifiedSchool = sRes.school;
+          verified = true;
+        }
+      }
+
+      if (verified) {
+        showRoleLoginScreen();
+        switchRole(role);
+        document.getElementById('loginIdInput').value = loginId;
+        document.getElementById('loginPwdInput').value = pwd;
+        
+        // Auto sign in
+        try {
+          const authRes = await fetch(`${API_BASE}/api/auth/login`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              school_id: schoolId,
+              role: role,
+              login_id: loginId,
+              password: pwd
+            })
+          });
+          if (authRes.ok) {
+            const authData = await authRes.json();
+            if (authData.success && authData.redirect) {
+              window.location.href = authData.redirect;
+              return;
+            }
+          }
+        } catch (e) {}
+
+        if (window.SchoolSync) {
+          const auth = await window.SchoolSync.login(schoolId, role, loginId, pwd);
+          if (auth.success && auth.redirect_url) {
+            window.location.href = auth.redirect_url;
+          }
+        }
+      }
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,1820 @@
+{
+  "metadata": {
+    "title": "EduSaaS Multi-School Management SaaS",
+    "version": "2.0.0",
+    "upi_gateway": {
+      "upi_id": "joy.john@ybl",
+      "recipient_name": "Joy John",
+      "merchant_name": "EduSaaS Multi-School Management",
+      "currency": "INR",
+      "status": "active"
+    },
+    "exported_at": "2026-11-15T17:05:02.159972"
+  },
+  "schools": {
+    "1": {
+      "id": 1,
+      "name": "St. Xavier's International Academy",
+      "code": "SXIA",
+      "domain": "sx-academy.edu",
+      "admin_name": "Dr. Anthony Morris",
+      "admin_email": "admin@sx-academy.edu",
+      "plan_id": "plan_1000",
+      "status": "active",
+      "phone": "+1 (555) 234-5678",
+      "address": "742 Evergreen Terrace, Springfield",
+      "created_at": "2026-11-14 22:29:16",
+      "password_salt": "sch_SXIA",
+      "password_hash": "fc804c4dad1da26aa525a2cf13734f254970627a22c5b131716c43e0435ec17d"
+    },
+    "2": {
+      "id": 2,
+      "name": "Apex Global High School",
+      "code": "APEX",
+      "domain": "apex-global.org",
+      "admin_name": "Mrs. Eleanor Vance",
+      "admin_email": "principal@apex-global.org",
+      "plan_id": "plan_2000",
+      "status": "active",
+      "phone": "+1 (555) 987-6543",
+      "address": "1200 Innovation Parkway, Cambridge",
+      "created_at": "2026-11-14 22:29:16",
+      "password_salt": "sch_APEX",
+      "password_hash": "9abb0611dab97cb48704b11a93f8966601e2b29ad6d5198500817c404919c231"
+    },
+    "3": {
+      "id": 3,
+      "name": "Grace Model Public School",
+      "code": "GMPS",
+      "domain": "gracemodel.org",
+      "admin_name": "Rev. David Wilson",
+      "admin_email": "office@gracemodel.org",
+      "plan_id": "plan_200",
+      "status": "active",
+      "phone": "+1 (555) 456-7890",
+      "address": "88 Church Road, Greenfield",
+      "created_at": "2026-11-14 22:29:16",
+      "password_salt": "sch_GMPS",
+      "password_hash": "793da6710f40c8c6de1a0e0681a67ee118f04d7107974442fbc30f87a67f5432"
+    },
+    "4": {
+      "id": 4,
+      "name": "Oakridge International School",
+      "code": "OIS",
+      "domain": "ois.schoolsaas.com",
+      "admin_name": "Dr. Catherine Howard",
+      "admin_email": "principal@oakridge.edu",
+      "plan_id": "plan_600",
+      "status": "active",
+      "phone": "+1 (555) 333-8899",
+      "address": "12 Ridge Way, Oak Valley",
+      "created_at": "2026-11-14 22:36:21",
+      "password_salt": "sch_OIS",
+      "password_hash": "5f50f04215b42f1ae958e4817b985b16e351af937d6ac2e8f8d181a88cf4fc89"
+    }
+  },
+  "sqlite_sequence": {
+    "1": {
+      "name": "schools",
+      "seq": 4
+    },
+    "2": {
+      "name": "users",
+      "seq": 5
+    },
+    "3": {
+      "name": "classes",
+      "seq": 9
+    },
+    "4": {
+      "name": "teachers",
+      "seq": 9
+    },
+    "5": {
+      "name": "parents",
+      "seq": 7
+    },
+    "6": {
+      "name": "students",
+      "seq": 12
+    },
+    "7": {
+      "name": "subjects",
+      "seq": 11
+    },
+    "8": {
+      "name": "chapters",
+      "seq": 8
+    },
+    "9": {
+      "name": "attendance",
+      "seq": 28
+    },
+    "10": {
+      "name": "assignments",
+      "seq": 4
+    },
+    "11": {
+      "name": "assignment_submissions",
+      "seq": 2
+    },
+    "12": {
+      "name": "exam_marks",
+      "seq": 6
+    },
+    "13": {
+      "name": "fee_structures",
+      "seq": 3
+    },
+    "14": {
+      "name": "fee_payments",
+      "seq": 3
+    },
+    "15": {
+      "name": "notices",
+      "seq": 3
+    },
+    "16": {
+      "name": "timetables",
+      "seq": 30
+    },
+    "17": {
+      "name": "leave_applications",
+      "seq": 2
+    },
+    "18": {
+      "name": "transport_routes",
+      "seq": 3
+    }
+  },
+  "subscription_plans": {
+    "plan_200": {
+      "id": "plan_200",
+      "name": "Micro Academy (Up to 200 Students)",
+      "student_limit": 200,
+      "monthly_price": 49.0,
+      "annual_price": 490.0,
+      "features": "Core SIS, Mobile App, Attendance, Gradebook, Basic Notices"
+    },
+    "plan_600": {
+      "id": "plan_600",
+      "name": "Standard School (Up to 600 Students)",
+      "student_limit": 600,
+      "monthly_price": 129.0,
+      "annual_price": 1290.0,
+      "features": "Full SIS, Parent Portal, Multi-Child Switching, Homework Engine, Push Alerts"
+    },
+    "plan_1000": {
+      "id": "plan_1000",
+      "name": "Premier Campus (Up to 1,000 Students)",
+      "student_limit": 1000,
+      "monthly_price": 249.0,
+      "annual_price": 2490.0,
+      "features": "Everything in Standard + Fee Gateway, Online Receipts, Timetables, Staff Leave System"
+    },
+    "plan_2000": {
+      "id": "plan_2000",
+      "name": "Advanced Institution (Up to 2,000 Students)",
+      "student_limit": 2000,
+      "monthly_price": 449.0,
+      "annual_price": 4490.0,
+      "features": "High Concurrency, Bus GPS Tracking, Custom Subdomain, Advanced Analytics, Priority Support"
+    },
+    "plan_5000": {
+      "id": "plan_5000",
+      "name": "Enterprise Multi-Campus (Up to 5,000 Students)",
+      "student_limit": 5000,
+      "monthly_price": 899.0,
+      "annual_price": 8990.0,
+      "features": "Unlimited Campuses, White-Label Mobile App, Dedicated Shard, Custom API Access, 99.99% SLA"
+    }
+  },
+  "users": {
+    "1": {
+      "id": 1,
+      "school_id": null,
+      "role": "super_admin",
+      "login_id": "SUPERADMIN",
+      "name": "Platform Super Administrator",
+      "email": "superadmin@schoolsaas.com",
+      "phone": "+1 (800) 555-SAAS",
+      "password_hash": "9f8db0df5589556ebc2511300085383fcb6839dd240a9b0acf6da6a7ea0ead84",
+      "status": "active",
+      "created_at": "2026-11-14 22:29:16",
+      "password_salt": "usr_1"
+    },
+    "2": {
+      "id": 2,
+      "school_id": 1,
+      "role": "school_admin",
+      "login_id": "PRIN-SXIA-01",
+      "name": "Dr. Anthony Morris",
+      "email": "admin@sx-academy.edu",
+      "phone": "+1 (555) 234-5678",
+      "password_hash": "d396c1abd805ebbb8b6bc44c742634a68a9d223dcb13c717f9aeddd6e19b4ad5",
+      "status": "active",
+      "created_at": "2026-11-14 22:29:16",
+      "password_salt": "usr_2"
+    },
+    "3": {
+      "id": 3,
+      "school_id": 2,
+      "role": "school_admin",
+      "login_id": "PRIN-APEX-01",
+      "name": "Mrs. Eleanor Vance",
+      "email": "principal@apex-global.org",
+      "phone": "+1 (555) 987-6543",
+      "password_hash": "9f1a256520f8d24f15570f75a0612e1bff4c504148ba445c783ace4ce3d251dc",
+      "status": "active",
+      "created_at": "2026-11-14 22:29:16",
+      "password_salt": "usr_3"
+    },
+    "4": {
+      "id": 4,
+      "school_id": 3,
+      "role": "school_admin",
+      "login_id": "PRIN-GMPS-01",
+      "name": "Rev. David Wilson",
+      "email": "office@gracemodel.org",
+      "phone": "+1 (555) 456-7890",
+      "password_hash": "138637c48e39fea43963d75e3c2bcbcf8d4aa00bbe0c3d1f38147b3a176f33a6",
+      "status": "active",
+      "created_at": "2026-11-14 22:29:16",
+      "password_salt": "usr_4"
+    },
+    "5": {
+      "id": 5,
+      "school_id": 4,
+      "role": "school_admin",
+      "login_id": "PRIN-OIS-01",
+      "name": "Dr. Catherine Howard",
+      "email": "principal@oakridge.edu",
+      "phone": "+1 (555) 333-8899",
+      "password_hash": "eb025c8f609dffc2a2ed5d57823493586aa5a05548abc45b77e4cb69d34ceca9",
+      "status": "active",
+      "created_at": "2026-11-14 22:36:21",
+      "password_salt": "usr_5"
+    }
+  },
+  "classes": {
+    "1": {
+      "id": 1,
+      "school_id": 1,
+      "name": "Grade 10",
+      "section": "A",
+      "room": "Room 301",
+      "class_teacher_name": "Prof. Marcus Brody"
+    },
+    "2": {
+      "id": 2,
+      "school_id": 1,
+      "name": "Grade 10",
+      "section": "B",
+      "room": "Room 302",
+      "class_teacher_name": "Dr. Sarah Connor"
+    },
+    "3": {
+      "id": 3,
+      "school_id": 1,
+      "name": "Grade 8",
+      "section": "A",
+      "room": "Room 205",
+      "class_teacher_name": "Mr. Robert Langdon"
+    },
+    "4": {
+      "id": 4,
+      "school_id": 1,
+      "name": "Grade 6",
+      "section": "A",
+      "room": "Room 104",
+      "class_teacher_name": "Mrs. Emily Watson"
+    },
+    "5": {
+      "id": 5,
+      "school_id": 2,
+      "name": "Grade 11",
+      "section": "A",
+      "room": "Science Wing 401",
+      "class_teacher_name": "Mr. Alan Turing"
+    },
+    "6": {
+      "id": 6,
+      "school_id": 2,
+      "name": "Grade 9",
+      "section": "B",
+      "room": "Arts Wing 202",
+      "class_teacher_name": "Mrs. Rosalind Franklin"
+    },
+    "7": {
+      "id": 7,
+      "school_id": 3,
+      "name": "Grade 5",
+      "section": "A",
+      "room": "Chapel Hall 101",
+      "class_teacher_name": "Mrs. Hannah Abbott"
+    },
+    "8": {
+      "id": 8,
+      "school_id": 3,
+      "name": "Grade 7",
+      "section": "A",
+      "room": "Hall 201",
+      "class_teacher_name": "Mr. Jonathan Edwards"
+    },
+    "9": {
+      "id": 9,
+      "school_id": 4,
+      "name": "Grade 10",
+      "section": "A",
+      "room": "Room 101",
+      "class_teacher_name": "Lead Teacher"
+    }
+  },
+  "parents": {
+    "1": {
+      "id": 1,
+      "school_id": 1,
+      "name": "Rajesh Sharma",
+      "phone": "+1 (555) 777-8899",
+      "email": "rajesh.sharma@corp.com",
+      "occupation": "Senior Tech Director",
+      "address": "42 Elm Street, Springfield"
+    },
+    "2": {
+      "id": 2,
+      "school_id": 1,
+      "name": "Michael Peterson",
+      "phone": "+1 (555) 888-9900",
+      "email": "m.peterson@lawfirm.com",
+      "occupation": "Attorney",
+      "address": "15 West Oak Avenue, Springfield"
+    },
+    "3": {
+      "id": 3,
+      "school_id": 1,
+      "name": "Priya & Vikram Nair",
+      "phone": "+1 (555) 999-0011",
+      "email": "priya.nair@healthcenter.org",
+      "occupation": "Physician",
+      "address": "88 Maple Lane, Springfield"
+    },
+    "4": {
+      "id": 4,
+      "school_id": 2,
+      "name": "Howard Vance",
+      "phone": "+1 (555) 987-1111",
+      "email": "h.vance@techbio.org",
+      "occupation": "Biotech Executive",
+      "address": "120 Innovation Blvd, Cambridge"
+    },
+    "5": {
+      "id": 5,
+      "school_id": 2,
+      "name": "Li & Wei Chen",
+      "phone": "+1 (555) 987-2222",
+      "email": "chen.family@cambridge.edu",
+      "occupation": "Professor",
+      "address": "45 Harvard Square, Cambridge"
+    },
+    "6": {
+      "id": 6,
+      "school_id": 3,
+      "name": "Jonathan Wilson",
+      "phone": "+1 (555) 456-7890",
+      "email": "j.wilson@greenfield.org",
+      "occupation": "Community Minister",
+      "address": "88 Church Road, Greenfield"
+    },
+    "7": {
+      "id": 7,
+      "school_id": 3,
+      "name": "Mary Joseph",
+      "phone": "+1 (555) 456-5566",
+      "email": "m.joseph@schoolboard.org",
+      "occupation": "Social Worker",
+      "address": "12 Riverbank Lane, Greenfield"
+    }
+  },
+  "students": {
+    "1": {
+      "id": 1,
+      "school_id": 1,
+      "class_id": 1,
+      "parent_id": 1,
+      "admission_no": "ADM-2024-001",
+      "roll_no": 101,
+      "name": "Aarav Sharma",
+      "gender": "Male",
+      "dob": "2010-04-12",
+      "blood_group": "B+",
+      "emergency_phone": "+1 (555) 777-8899",
+      "address": "42 Elm Street, Springfield",
+      "photo_url": "assets/student1.png",
+      "password_salt": "stu_1",
+      "password_hash": "bcd20a3c3ff5ddbe8872025bf988eb4ce0944746513f98312aa1f4031537e8d5"
+    },
+    "2": {
+      "id": 2,
+      "school_id": 1,
+      "class_id": 4,
+      "parent_id": 1,
+      "admission_no": "ADM-2024-002",
+      "roll_no": 204,
+      "name": "Ananya Sharma",
+      "gender": "Female",
+      "dob": "2014-09-22",
+      "blood_group": "B+",
+      "emergency_phone": "+1 (555) 777-8899",
+      "address": "42 Elm Street, Springfield",
+      "photo_url": "assets/student2.png",
+      "password_salt": "stu_2",
+      "password_hash": "bb7323f62249ad2fd1c2e7e1380a25fa2132088dd6da5a83b0c7ccf36a6271e9"
+    },
+    "3": {
+      "id": 3,
+      "school_id": 1,
+      "class_id": 1,
+      "parent_id": 2,
+      "admission_no": "ADM-2024-003",
+      "roll_no": 102,
+      "name": "David Peterson",
+      "gender": "Male",
+      "dob": "2010-06-18",
+      "blood_group": "O+",
+      "emergency_phone": "+1 (555) 888-9900",
+      "address": "15 West Oak Avenue, Springfield",
+      "photo_url": "assets/student3.png",
+      "password_salt": "stu_3",
+      "password_hash": "c746bb63913aace7181f3cf5a840e7b31e149ee0fc5cf9b6acf8e01769610fc3"
+    },
+    "4": {
+      "id": 4,
+      "school_id": 1,
+      "class_id": 1,
+      "parent_id": 3,
+      "admission_no": "ADM-2024-004",
+      "roll_no": 103,
+      "name": "Diya Nair",
+      "gender": "Female",
+      "dob": "2010-11-05",
+      "blood_group": "A+",
+      "emergency_phone": "+1 (555) 999-0011",
+      "address": "88 Maple Lane, Springfield",
+      "photo_url": "assets/student4.png",
+      "password_salt": "stu_4",
+      "password_hash": "54788249dd782e8d92fb7a5048478c1f08408a57edd842d4ade23abf033f668d"
+    },
+    "6": {
+      "id": 6,
+      "school_id": 2,
+      "class_id": 5,
+      "parent_id": 4,
+      "admission_no": "ADM-APEX-101",
+      "roll_no": 11,
+      "name": "Ethan Vance",
+      "gender": "Male",
+      "dob": "2009-03-14",
+      "blood_group": "A+",
+      "emergency_phone": "+1 (555) 987-1111",
+      "address": "120 Innovation Blvd, Cambridge",
+      "photo_url": "assets/student5.png",
+      "password_salt": "stu_6",
+      "password_hash": "183cf02028a9109c771a01e3c41aaa16ed6ea1417377aef5669c438819798912"
+    },
+    "7": {
+      "id": 7,
+      "school_id": 2,
+      "class_id": 5,
+      "parent_id": 5,
+      "admission_no": "ADM-APEX-102",
+      "roll_no": 12,
+      "name": "Sophia Chen",
+      "gender": "Female",
+      "dob": "2009-08-20",
+      "blood_group": "O+",
+      "emergency_phone": "+1 (555) 987-2222",
+      "address": "45 Harvard Square, Cambridge",
+      "photo_url": "assets/student6.png",
+      "password_salt": "stu_7",
+      "password_hash": "2d9c6ffd3f75bef76971ffd1630a8da98f6ad54d9fd7a85f734e723185428ab4"
+    },
+    "8": {
+      "id": 8,
+      "school_id": 2,
+      "class_id": 6,
+      "parent_id": 4,
+      "admission_no": "ADM-APEX-103",
+      "roll_no": 25,
+      "name": "Lucas Reed",
+      "gender": "Male",
+      "dob": "2011-12-05",
+      "blood_group": "B+",
+      "emergency_phone": "+1 (555) 987-3333",
+      "address": "88 Memorial Drive, Cambridge",
+      "photo_url": "assets/student7.png",
+      "password_salt": "stu_8",
+      "password_hash": "58a2225e2745f63bd5c0b08cf754ec9a3a5c10e214bc6560da026ade06c2051e"
+    },
+    "9": {
+      "id": 9,
+      "school_id": 3,
+      "class_id": 7,
+      "parent_id": 6,
+      "admission_no": "ADM-GMPS-01",
+      "roll_no": 1,
+      "name": "Samuel Wilson",
+      "gender": "Male",
+      "dob": "2015-05-10",
+      "blood_group": "O+",
+      "emergency_phone": "+1 (555) 456-7890",
+      "address": "88 Church Road, Greenfield",
+      "photo_url": "assets/student8.png",
+      "password_salt": "stu_9",
+      "password_hash": "ba7dc0efd9c923814aadf0831c4673c3e5f74b47326ac5b4e10a7ef7df43d58c"
+    },
+    "10": {
+      "id": 10,
+      "school_id": 3,
+      "class_id": 7,
+      "parent_id": 7,
+      "admission_no": "ADM-GMPS-02",
+      "roll_no": 2,
+      "name": "Miriam Joseph",
+      "gender": "Female",
+      "dob": "2015-09-14",
+      "blood_group": "A+",
+      "emergency_phone": "+1 (555) 456-5566",
+      "address": "12 Riverbank Lane, Greenfield",
+      "photo_url": "assets/student9.png",
+      "password_salt": "stu_10",
+      "password_hash": "69fbeb0a71c68629f1bd5bf5472e7aef7054eef11e4016baa7e3cf5c34138609"
+    },
+    "11": {
+      "id": 11,
+      "school_id": 3,
+      "class_id": 8,
+      "parent_id": 6,
+      "admission_no": "ADM-GMPS-03",
+      "roll_no": 8,
+      "name": "Caleb Thomas",
+      "gender": "Male",
+      "dob": "2013-11-28",
+      "blood_group": "AB+",
+      "emergency_phone": "+1 (555) 456-9900",
+      "address": "34 Oak Street, Greenfield",
+      "photo_url": "assets/student10.png",
+      "password_salt": "stu_11",
+      "password_hash": "20aeb7643f6637d85e3ae4ea01b392f6ef01202dcde7a431dcccf874ae9a1b17"
+    },
+    "12": {
+      "id": 12,
+      "school_id": 4,
+      "class_id": 9,
+      "parent_id": null,
+      "admission_no": "ADM-OIS-001",
+      "roll_no": 1,
+      "name": "Sample Student",
+      "gender": "Male",
+      "dob": "2012-01-01",
+      "blood_group": "O+",
+      "emergency_phone": "+1 (555) 333-8899",
+      "address": "12 Ridge Way, Oak Valley",
+      "photo_url": "assets/student_new.png",
+      "password_salt": "stu_12",
+      "password_hash": "a24c51d876105034860271f88a36835a5d35682ed3466fdad48bd63c7d049744"
+    }
+  },
+  "teachers": {
+    "1": {
+      "id": 1,
+      "school_id": 1,
+      "teacher_code": "TCH-SXIA-01",
+      "name": "Prof. Marcus Brody",
+      "email": "mbrody@sx-academy.edu",
+      "phone": "+1 (555) 111-2233",
+      "designation": "Senior Faculty",
+      "subject_specialization": "Mathematics",
+      "qualification": "M.Sc, M.Ed",
+      "salary": 65000.0,
+      "join_date": "2021-08-15",
+      "blood_group": "O+",
+      "password_salt": "tch_1",
+      "password_hash": "61447e1e52dd8012f418358d7bb7e90e62017179ad3985c6fef4ed2ae372b150"
+    },
+    "2": {
+      "id": 2,
+      "school_id": 1,
+      "teacher_code": "TCH-SXIA-02",
+      "name": "Dr. Sarah Connor",
+      "email": "sconnor@sx-academy.edu",
+      "phone": "+1 (555) 222-3344",
+      "designation": "Lead Educator",
+      "subject_specialization": "Science & Physics",
+      "qualification": "Ph.D Physics",
+      "salary": 72000.0,
+      "join_date": "2020-07-01",
+      "blood_group": "A+",
+      "password_salt": "tch_2",
+      "password_hash": "137004cef2a8c1b6699fe9a393d6259f0d846d0deec8d1087dc1419b1606a312"
+    },
+    "3": {
+      "id": 3,
+      "school_id": 1,
+      "teacher_code": "TCH-SXIA-03",
+      "name": "Mr. Robert Langdon",
+      "email": "rlangdon@sx-academy.edu",
+      "phone": "+1 (555) 333-4455",
+      "designation": "Teacher",
+      "subject_specialization": "Social Studies & History",
+      "qualification": "M.A History",
+      "salary": 58000.0,
+      "join_date": "2022-01-10",
+      "blood_group": "B+",
+      "password_salt": "tch_3",
+      "password_hash": "163f24cff789e51d296c38375f3bf79a1e815204b1c72b279a7ae8e4a7d966d4"
+    },
+    "4": {
+      "id": 4,
+      "school_id": 1,
+      "teacher_code": "TCH-SXIA-04",
+      "name": "Mrs. Emily Watson",
+      "email": "ewatson@sx-academy.edu",
+      "phone": "+1 (555) 444-5566",
+      "designation": "Teacher",
+      "subject_specialization": "English Literature",
+      "qualification": "M.A English",
+      "salary": 59000.0,
+      "join_date": "2021-09-01",
+      "blood_group": "AB+",
+      "password_salt": "tch_4",
+      "password_hash": "fc94a002890422e21ea9a22506dc96db0c8ea2bb6011b56451380f3d71992cbb"
+    },
+    "5": {
+      "id": 5,
+      "school_id": 2,
+      "teacher_code": "TCH-APEX-01",
+      "name": "Mr. Alan Turing",
+      "email": "aturing@apex-global.org",
+      "phone": "+1 (555) 666-1010",
+      "designation": "Head of STEM",
+      "subject_specialization": "Computer Science & AI",
+      "qualification": "M.Sc Computer Engineering",
+      "salary": 78000.0,
+      "join_date": "2019-03-01",
+      "blood_group": "A-",
+      "password_salt": "tch_5",
+      "password_hash": "8be3e4cc14a3e4dfa823e077cd5f875b57a3b646d57073f62a298394e4b58121"
+    },
+    "6": {
+      "id": 6,
+      "school_id": 2,
+      "teacher_code": "TCH-APEX-02",
+      "name": "Mrs. Rosalind Franklin",
+      "email": "rfranklin@apex-global.org",
+      "phone": "+1 (555) 666-2020",
+      "designation": "Lead Faculty",
+      "subject_specialization": "Biology & Chemistry",
+      "qualification": "Ph.D Biochemistry",
+      "salary": 75000.0,
+      "join_date": "2020-09-01",
+      "blood_group": "O+",
+      "password_salt": "tch_6",
+      "password_hash": "14c1b223b50444dae8c0183866b881d1c895c9528593be804f9ea2107618a7c3"
+    },
+    "7": {
+      "id": 7,
+      "school_id": 3,
+      "teacher_code": "TCH-GMPS-01",
+      "name": "Mrs. Hannah Abbott",
+      "email": "habbott@gracemodel.org",
+      "phone": "+1 (555) 456-1122",
+      "designation": "Primary Lead",
+      "subject_specialization": "English & Arts",
+      "qualification": "B.Ed, B.A Literature",
+      "salary": 48000.0,
+      "join_date": "2022-06-01",
+      "blood_group": "A+",
+      "password_salt": "tch_7",
+      "password_hash": "b0c01270d65dba0339243af00d35ec3f50729e5e3cc4abb3670c1431a80e72d9"
+    },
+    "8": {
+      "id": 8,
+      "school_id": 3,
+      "teacher_code": "TCH-GMPS-02",
+      "name": "Mr. Jonathan Edwards",
+      "email": "jedwards@gracemodel.org",
+      "phone": "+1 (555) 456-3344",
+      "designation": "Educator",
+      "subject_specialization": "Mathematics & Science",
+      "qualification": "B.Sc Education",
+      "salary": 50000.0,
+      "join_date": "2021-08-01",
+      "blood_group": "B+",
+      "password_salt": "tch_8",
+      "password_hash": "cde9e0fa3cbc1e33a67982178e5d0bd627298d00285e244b37fe9bc6cd3a365f"
+    },
+    "9": {
+      "id": 9,
+      "school_id": 4,
+      "teacher_code": "TCH-OIS-01",
+      "name": "Prof. Howard",
+      "email": "principal@oakridge.edu",
+      "phone": "+1 (555) 333-8899",
+      "designation": "Head Faculty",
+      "subject_specialization": "General Studies",
+      "qualification": "M.Ed",
+      "salary": 55000.0,
+      "join_date": "2026-11-14",
+      "blood_group": "O+",
+      "password_salt": "tch_9",
+      "password_hash": "97c5ef336bf6dc66af02b3c691773cc76298e9aa965b127060189d4b3a59bded"
+    }
+  },
+  "subjects": {
+    "1": {
+      "id": 1,
+      "school_id": 1,
+      "class_id": 1,
+      "name": "Advanced Mathematics",
+      "code": "MATH10",
+      "teacher_id": 1
+    },
+    "2": {
+      "id": 2,
+      "school_id": 1,
+      "class_id": 1,
+      "name": "Physical Sciences",
+      "code": "SCI10",
+      "teacher_id": 2
+    },
+    "3": {
+      "id": 3,
+      "school_id": 1,
+      "class_id": 1,
+      "name": "World History",
+      "code": "HIST10",
+      "teacher_id": 3
+    },
+    "4": {
+      "id": 4,
+      "school_id": 1,
+      "class_id": 1,
+      "name": "English Literature",
+      "code": "ENG10",
+      "teacher_id": 4
+    },
+    "5": {
+      "id": 5,
+      "school_id": 1,
+      "class_id": 4,
+      "name": "Basic Mathematics",
+      "code": "MATH06",
+      "teacher_id": 1
+    },
+    "6": {
+      "id": 6,
+      "school_id": 1,
+      "class_id": 4,
+      "name": "General Science",
+      "code": "SCI06",
+      "teacher_id": 2
+    },
+    "7": {
+      "id": 7,
+      "school_id": 2,
+      "class_id": 5,
+      "name": "Computer Science & AI",
+      "code": "CS11",
+      "teacher_id": 5
+    },
+    "8": {
+      "id": 8,
+      "school_id": 2,
+      "class_id": 5,
+      "name": "Molecular Biology & Genetics",
+      "code": "BIO11",
+      "teacher_id": 6
+    },
+    "9": {
+      "id": 9,
+      "school_id": 2,
+      "class_id": 6,
+      "name": "Foundational Computing",
+      "code": "CS09",
+      "teacher_id": 5
+    },
+    "10": {
+      "id": 10,
+      "school_id": 3,
+      "class_id": 7,
+      "name": "Language Arts & Reading",
+      "code": "ENG05",
+      "teacher_id": 7
+    },
+    "11": {
+      "id": 11,
+      "school_id": 3,
+      "class_id": 7,
+      "name": "Elementary Mathematics",
+      "code": "MATH05",
+      "teacher_id": 8
+    }
+  },
+  "chapters": {
+    "1": {
+      "id": 1,
+      "subject_id": 1,
+      "chapter_no": 1,
+      "title": "Quadratic Equations & Polynomials",
+      "summary": "Concept of roots, discriminant, and graphing parabolic functions.",
+      "status": "Completed"
+    },
+    "2": {
+      "id": 2,
+      "subject_id": 1,
+      "chapter_no": 2,
+      "title": "Trigonometric Identities & Ratios",
+      "summary": "Sine, Cosine, Tangent laws, unit circle theorems and proofs.",
+      "status": "In Progress"
+    },
+    "3": {
+      "id": 3,
+      "subject_id": 2,
+      "chapter_no": 1,
+      "title": "Newtonian Mechanics & Dynamics",
+      "summary": "Laws of motion, friction, impulse, momentum and collisions.",
+      "status": "Completed"
+    },
+    "4": {
+      "id": 4,
+      "subject_id": 4,
+      "chapter_no": 1,
+      "title": "Shakespearean Tragedy Analysis: Macbeth",
+      "summary": "Dramatic tension, character foils, soliloquies and motifs.",
+      "status": "Completed"
+    },
+    "5": {
+      "id": 5,
+      "subject_id": 7,
+      "chapter_no": 1,
+      "title": "Data Structures & Neural Networks",
+      "summary": "Graphs, binary trees, recursion and perceptron models.",
+      "status": "Completed"
+    },
+    "6": {
+      "id": 6,
+      "subject_id": 8,
+      "chapter_no": 1,
+      "title": "DNA Replication & CRISPR Tech",
+      "summary": "Genome sequencing and biological synthesis pathways.",
+      "status": "In Progress"
+    },
+    "7": {
+      "id": 7,
+      "subject_id": 10,
+      "chapter_no": 1,
+      "title": "Fables & Creative Writing",
+      "summary": "Story arc structure, descriptive vocabulary, and moral lessons.",
+      "status": "Completed"
+    },
+    "8": {
+      "id": 8,
+      "subject_id": 11,
+      "chapter_no": 1,
+      "title": "Multiplication & Fractions",
+      "summary": "Real world fractions and long division techniques.",
+      "status": "Completed"
+    }
+  },
+  "attendance": {
+    "1": {
+      "id": 1,
+      "school_id": 1,
+      "date": "2026-11-14",
+      "class_id": 1,
+      "student_id": 1,
+      "status": "Present",
+      "marked_by": "Prof. Marcus Brody",
+      "created_at": "2026-11-14 22:29:16"
+    },
+    "2": {
+      "id": 2,
+      "school_id": 1,
+      "date": "2026-11-14",
+      "class_id": 1,
+      "student_id": 3,
+      "status": "Present",
+      "marked_by": "Prof. Marcus Brody",
+      "created_at": "2026-11-14 22:29:16"
+    },
+    "3": {
+      "id": 3,
+      "school_id": 1,
+      "date": "2026-11-14",
+      "class_id": 4,
+      "student_id": 2,
+      "status": "Present",
+      "marked_by": "Mrs. Emily Watson",
+      "created_at": "2026-11-14 22:29:16"
+    },
+    "4": {
+      "id": 4,
+      "school_id": 1,
+      "date": "2026-11-13",
+      "class_id": 1,
+      "student_id": 1,
+      "status": "Present",
+      "marked_by": "Prof. Marcus Brody",
+      "created_at": "2026-11-14 22:29:16"
+    },
+    "5": {
+      "id": 5,
+      "school_id": 1,
+      "date": "2026-11-13",
+      "class_id": 1,
+      "student_id": 3,
+      "status": "Present",
+      "marked_by": "Prof. Marcus Brody",
+      "created_at": "2026-11-14 22:29:16"
+    },
+    "6": {
+      "id": 6,
+      "school_id": 1,
+      "date": "2026-11-13",
+      "class_id": 4,
+      "student_id": 2,
+      "status": "Present",
+      "marked_by": "Mrs. Emily Watson",
+      "created_at": "2026-11-14 22:29:16"
+    },
+    "7": {
+      "id": 7,
+      "school_id": 1,
+      "date": "2026-11-12",
+      "class_id": 1,
+      "student_id": 1,
+      "status": "Present",
+      "marked_by": "Prof. Marcus Brody",
+      "created_at": "2026-11-14 22:29:16"
+    },
+    "8": {
+      "id": 8,
+      "school_id": 1,
+      "date": "2026-11-12",
+      "class_id": 1,
+      "student_id": 3,
+      "status": "Present",
+      "marked_by": "Prof. Marcus Brody",
+      "created_at": "2026-11-14 22:29:16"
+    },
+    "9": {
+      "id": 9,
+      "school_id": 1,
+      "date": "2026-11-12",
+      "class_id": 4,
+      "student_id": 2,
+      "status": "Present",
+      "marked_by": "Mrs. Emily Watson",
+      "created_at": "2026-11-14 22:29:16"
+    },
+    "10": {
+      "id": 10,
+      "school_id": 1,
+      "date": "2026-11-11",
+      "class_id": 1,
+      "student_id": 1,
+      "status": "Present",
+      "marked_by": "Prof. Marcus Brody",
+      "created_at": "2026-11-14 22:29:16"
+    },
+    "11": {
+      "id": 11,
+      "school_id": 1,
+      "date": "2026-11-11",
+      "class_id": 1,
+      "student_id": 3,
+      "status": "Present",
+      "marked_by": "Prof. Marcus Brody",
+      "created_at": "2026-11-14 22:29:16"
+    },
+    "12": {
+      "id": 12,
+      "school_id": 1,
+      "date": "2026-11-11",
+      "class_id": 4,
+      "student_id": 2,
+      "status": "Present",
+      "marked_by": "Mrs. Emily Watson",
+      "created_at": "2026-11-14 22:29:16"
+    },
+    "13": {
+      "id": 13,
+      "school_id": 2,
+      "date": "2026-11-14",
+      "class_id": 5,
+      "student_id": 6,
+      "status": "Present",
+      "marked_by": "Mr. Alan Turing",
+      "created_at": "2026-11-14 22:29:16"
+    },
+    "14": {
+      "id": 14,
+      "school_id": 2,
+      "date": "2026-11-14",
+      "class_id": 5,
+      "student_id": 7,
+      "status": "Present",
+      "marked_by": "Mr. Alan Turing",
+      "created_at": "2026-11-14 22:29:16"
+    },
+    "15": {
+      "id": 15,
+      "school_id": 2,
+      "date": "2026-11-13",
+      "class_id": 5,
+      "student_id": 6,
+      "status": "Present",
+      "marked_by": "Mr. Alan Turing",
+      "created_at": "2026-11-14 22:29:16"
+    },
+    "16": {
+      "id": 16,
+      "school_id": 2,
+      "date": "2026-11-13",
+      "class_id": 5,
+      "student_id": 7,
+      "status": "Present",
+      "marked_by": "Mr. Alan Turing",
+      "created_at": "2026-11-14 22:29:16"
+    },
+    "17": {
+      "id": 17,
+      "school_id": 2,
+      "date": "2026-11-12",
+      "class_id": 5,
+      "student_id": 6,
+      "status": "Present",
+      "marked_by": "Mr. Alan Turing",
+      "created_at": "2026-11-14 22:29:16"
+    },
+    "18": {
+      "id": 18,
+      "school_id": 2,
+      "date": "2026-11-12",
+      "class_id": 5,
+      "student_id": 7,
+      "status": "Present",
+      "marked_by": "Mr. Alan Turing",
+      "created_at": "2026-11-14 22:29:16"
+    },
+    "19": {
+      "id": 19,
+      "school_id": 2,
+      "date": "2026-11-11",
+      "class_id": 5,
+      "student_id": 6,
+      "status": "Present",
+      "marked_by": "Mr. Alan Turing",
+      "created_at": "2026-11-14 22:29:16"
+    },
+    "20": {
+      "id": 20,
+      "school_id": 2,
+      "date": "2026-11-11",
+      "class_id": 5,
+      "student_id": 7,
+      "status": "Present",
+      "marked_by": "Mr. Alan Turing",
+      "created_at": "2026-11-14 22:29:16"
+    },
+    "21": {
+      "id": 21,
+      "school_id": 3,
+      "date": "2026-11-14",
+      "class_id": 7,
+      "student_id": 9,
+      "status": "Present",
+      "marked_by": "Mrs. Hannah Abbott",
+      "created_at": "2026-11-14 22:29:16"
+    },
+    "22": {
+      "id": 22,
+      "school_id": 3,
+      "date": "2026-11-14",
+      "class_id": 7,
+      "student_id": 10,
+      "status": "Present",
+      "marked_by": "Mrs. Hannah Abbott",
+      "created_at": "2026-11-14 22:29:16"
+    },
+    "23": {
+      "id": 23,
+      "school_id": 3,
+      "date": "2026-11-13",
+      "class_id": 7,
+      "student_id": 9,
+      "status": "Present",
+      "marked_by": "Mrs. Hannah Abbott",
+      "created_at": "2026-11-14 22:29:16"
+    },
+    "24": {
+      "id": 24,
+      "school_id": 3,
+      "date": "2026-11-13",
+      "class_id": 7,
+      "student_id": 10,
+      "status": "Present",
+      "marked_by": "Mrs. Hannah Abbott",
+      "created_at": "2026-11-14 22:29:16"
+    },
+    "25": {
+      "id": 25,
+      "school_id": 3,
+      "date": "2026-11-12",
+      "class_id": 7,
+      "student_id": 9,
+      "status": "Present",
+      "marked_by": "Mrs. Hannah Abbott",
+      "created_at": "2026-11-14 22:29:16"
+    },
+    "26": {
+      "id": 26,
+      "school_id": 3,
+      "date": "2026-11-12",
+      "class_id": 7,
+      "student_id": 10,
+      "status": "Present",
+      "marked_by": "Mrs. Hannah Abbott",
+      "created_at": "2026-11-14 22:29:16"
+    },
+    "27": {
+      "id": 27,
+      "school_id": 3,
+      "date": "2026-11-11",
+      "class_id": 7,
+      "student_id": 9,
+      "status": "Present",
+      "marked_by": "Mrs. Hannah Abbott",
+      "created_at": "2026-11-14 22:29:16"
+    },
+    "28": {
+      "id": 28,
+      "school_id": 3,
+      "date": "2026-11-11",
+      "class_id": 7,
+      "student_id": 10,
+      "status": "Present",
+      "marked_by": "Mrs. Hannah Abbott",
+      "created_at": "2026-11-14 22:29:16"
+    }
+  },
+  "assignments": {
+    "1": {
+      "id": 1,
+      "school_id": 1,
+      "class_id": 1,
+      "subject_id": 1,
+      "teacher_name": "Prof. Marcus Brody",
+      "title": "Calculus & Quadratic Curve Sketching",
+      "description": "Solve problem sets 4.1 to 4.5. Show all steps.",
+      "points": 100,
+      "due_date": "2026-11-17",
+      "attachments": "math_sheet_hw1.pdf",
+      "created_at": "2026-11-14 22:29:16"
+    },
+    "2": {
+      "id": 2,
+      "school_id": 1,
+      "class_id": 1,
+      "subject_id": 2,
+      "teacher_name": "Dr. Sarah Connor",
+      "title": "Kinematics Lab Report & Velocity Analysis",
+      "description": "Submit a 3-page laboratory analysis documenting projectile acceleration.",
+      "points": 50,
+      "due_date": "2026-11-19",
+      "attachments": "physics_lab_template.docx",
+      "created_at": "2026-11-14 22:29:16"
+    },
+    "3": {
+      "id": 3,
+      "school_id": 2,
+      "class_id": 5,
+      "subject_id": 7,
+      "teacher_name": "Mr. Alan Turing",
+      "title": "Algorithm Complexity & Big-O Benchmark",
+      "description": "Write a Python program comparing Merge Sort and Quick Sort time complexities.",
+      "points": 100,
+      "due_date": "2026-11-16",
+      "attachments": "sorting_spec.pdf",
+      "created_at": "2026-11-14 22:29:16"
+    },
+    "4": {
+      "id": 4,
+      "school_id": 3,
+      "class_id": 7,
+      "subject_id": 10,
+      "teacher_name": "Mrs. Hannah Abbott",
+      "title": "Creative Fable Story Composition",
+      "description": "Write a 300-word illustrated fable featuring two woodland creatures.",
+      "points": 50,
+      "due_date": "2026-11-18",
+      "attachments": "story_guideline.pdf",
+      "created_at": "2026-11-14 22:29:16"
+    }
+  },
+  "assignment_submissions": {
+    "1": {
+      "id": 1,
+      "assignment_id": 1,
+      "student_id": 1,
+      "submission_text": "Solved calculus problem set with all graphical plots.",
+      "file_name": "aarav_sharma_math_hw1.pdf",
+      "marks_obtained": 96.0,
+      "feedback": "Excellent work on the quadratic roots derivations! Clean presentation.",
+      "submitted_at": "2026-11-14 22:29:16",
+      "status": "Graded"
+    },
+    "2": {
+      "id": 2,
+      "assignment_id": 3,
+      "student_id": 6,
+      "submission_text": "Implemented sorting benchmarks with timing graphs in matplotlib.",
+      "file_name": "ethan_vance_sorting.py",
+      "marks_obtained": 98.0,
+      "feedback": "Superb runtime complexity analysis!",
+      "submitted_at": "2026-11-14 22:29:16",
+      "status": "Graded"
+    }
+  },
+  "exam_marks": {
+    "1": {
+      "id": 1,
+      "school_id": 1,
+      "exam_name": "Mid-Term Examinations 2026",
+      "student_id": 1,
+      "subject_id": 1,
+      "marks_obtained": 94.0,
+      "max_marks": 100.0,
+      "grade": "A+"
+    },
+    "2": {
+      "id": 2,
+      "school_id": 1,
+      "exam_name": "Mid-Term Examinations 2026",
+      "student_id": 1,
+      "subject_id": 2,
+      "marks_obtained": 91.5,
+      "max_marks": 100.0,
+      "grade": "A+"
+    },
+    "3": {
+      "id": 3,
+      "school_id": 2,
+      "exam_name": "Autumn Term Assessment 2026",
+      "student_id": 6,
+      "subject_id": 7,
+      "marks_obtained": 98.0,
+      "max_marks": 100.0,
+      "grade": "A+"
+    },
+    "4": {
+      "id": 4,
+      "school_id": 2,
+      "exam_name": "Autumn Term Assessment 2026",
+      "student_id": 7,
+      "subject_id": 8,
+      "marks_obtained": 95.0,
+      "max_marks": 100.0,
+      "grade": "A+"
+    },
+    "5": {
+      "id": 5,
+      "school_id": 3,
+      "exam_name": "Term 1 Evaluation 2026",
+      "student_id": 9,
+      "subject_id": 10,
+      "marks_obtained": 92.0,
+      "max_marks": 100.0,
+      "grade": "A+"
+    },
+    "6": {
+      "id": 6,
+      "school_id": 3,
+      "exam_name": "Term 1 Evaluation 2026",
+      "student_id": 10,
+      "subject_id": 11,
+      "marks_obtained": 89.0,
+      "max_marks": 100.0,
+      "grade": "A"
+    }
+  },
+  "fee_structures": {
+    "1": {
+      "id": 1,
+      "school_id": 1,
+      "class_id": 1,
+      "fee_title": "Term 1 Tuition & Lab Fee",
+      "amount": 1250.0,
+      "due_date": "2026-09-15",
+      "term": "Term 1"
+    },
+    "2": {
+      "id": 2,
+      "school_id": 2,
+      "class_id": 5,
+      "fee_title": "Semester 1 STEM Lab & Tuition Fee",
+      "amount": 1850.0,
+      "due_date": "2026-09-20",
+      "term": "Term 1"
+    },
+    "3": {
+      "id": 3,
+      "school_id": 3,
+      "class_id": 7,
+      "fee_title": "Term 1 Primary School Fee",
+      "amount": 450.0,
+      "due_date": "2026-09-10",
+      "term": "Term 1"
+    }
+  },
+  "fee_payments": {
+    "1": {
+      "id": 1,
+      "school_id": 1,
+      "student_id": 1,
+      "receipt_no": "RCP-2026-10492",
+      "fee_title": "Term 1 Tuition & Lab Fee",
+      "amount_paid": 1250.0,
+      "payment_mode": "Stripe Online",
+      "payment_date": "2026-09-10",
+      "status": "Paid",
+      "notes": "Cleared via Parent Credit Card"
+    },
+    "2": {
+      "id": 2,
+      "school_id": 2,
+      "student_id": 6,
+      "receipt_no": "RCP-2026-20891",
+      "fee_title": "Semester 1 STEM Lab & Tuition Fee",
+      "amount_paid": 1850.0,
+      "payment_mode": "Wire Transfer",
+      "payment_date": "2026-09-18",
+      "status": "Paid",
+      "notes": "Cleared via Wire Transfer"
+    },
+    "3": {
+      "id": 3,
+      "school_id": 3,
+      "student_id": 9,
+      "receipt_no": "RCP-2026-30114",
+      "fee_title": "Term 1 Primary School Fee",
+      "amount_paid": 450.0,
+      "payment_mode": "Cash / Counter",
+      "payment_date": "2026-09-08",
+      "status": "Paid",
+      "notes": "Cash payment receipt issued"
+    }
+  },
+  "notices": {
+    "1": {
+      "id": 1,
+      "school_id": 1,
+      "title": "Annual STEM Science Expo & Robotics Showcase",
+      "content": "Regional STEM Innovation Expo on Dec 5th. All student projects must be registered by next Friday.",
+      "target_role": "All",
+      "priority": "High",
+      "date": "2026-11-10",
+      "author": "Principal Office"
+    },
+    "2": {
+      "id": 2,
+      "school_id": 2,
+      "title": "Cambridge AI & Robotics Hackathon 2026",
+      "content": "Registration open for the 48-hour inter-school AI challenge. Mentors will be assigned this week.",
+      "target_role": "All",
+      "priority": "High",
+      "date": "2026-11-12",
+      "author": "Dean of Engineering"
+    },
+    "3": {
+      "id": 3,
+      "school_id": 3,
+      "title": "Annual Harvest Thanksgiving & Book Fair",
+      "content": "Join us this Saturday for our community book fair and fellowship luncheon.",
+      "target_role": "All",
+      "priority": "Normal",
+      "date": "2026-11-14",
+      "author": "School Board"
+    }
+  },
+  "timetables": {
+    "1": {
+      "id": 1,
+      "school_id": 1,
+      "class_id": 1,
+      "day_of_week": "Monday",
+      "period_no": 1,
+      "time_slot": "08:30 - 09:20",
+      "subject_name": "Advanced Mathematics",
+      "teacher_name": "Prof. Marcus Brody",
+      "room_no": "Room 301"
+    },
+    "2": {
+      "id": 2,
+      "school_id": 1,
+      "class_id": 1,
+      "day_of_week": "Monday",
+      "period_no": 2,
+      "time_slot": "09:25 - 10:15",
+      "subject_name": "Physical Sciences",
+      "teacher_name": "Dr. Sarah Connor",
+      "room_no": "Physics Lab A"
+    },
+    "3": {
+      "id": 3,
+      "school_id": 1,
+      "class_id": 1,
+      "day_of_week": "Tuesday",
+      "period_no": 1,
+      "time_slot": "08:30 - 09:20",
+      "subject_name": "Advanced Mathematics",
+      "teacher_name": "Prof. Marcus Brody",
+      "room_no": "Room 301"
+    },
+    "4": {
+      "id": 4,
+      "school_id": 1,
+      "class_id": 1,
+      "day_of_week": "Tuesday",
+      "period_no": 2,
+      "time_slot": "09:25 - 10:15",
+      "subject_name": "Physical Sciences",
+      "teacher_name": "Dr. Sarah Connor",
+      "room_no": "Physics Lab A"
+    },
+    "5": {
+      "id": 5,
+      "school_id": 1,
+      "class_id": 1,
+      "day_of_week": "Wednesday",
+      "period_no": 1,
+      "time_slot": "08:30 - 09:20",
+      "subject_name": "Advanced Mathematics",
+      "teacher_name": "Prof. Marcus Brody",
+      "room_no": "Room 301"
+    },
+    "6": {
+      "id": 6,
+      "school_id": 1,
+      "class_id": 1,
+      "day_of_week": "Wednesday",
+      "period_no": 2,
+      "time_slot": "09:25 - 10:15",
+      "subject_name": "Physical Sciences",
+      "teacher_name": "Dr. Sarah Connor",
+      "room_no": "Physics Lab A"
+    },
+    "7": {
+      "id": 7,
+      "school_id": 1,
+      "class_id": 1,
+      "day_of_week": "Thursday",
+      "period_no": 1,
+      "time_slot": "08:30 - 09:20",
+      "subject_name": "Advanced Mathematics",
+      "teacher_name": "Prof. Marcus Brody",
+      "room_no": "Room 301"
+    },
+    "8": {
+      "id": 8,
+      "school_id": 1,
+      "class_id": 1,
+      "day_of_week": "Thursday",
+      "period_no": 2,
+      "time_slot": "09:25 - 10:15",
+      "subject_name": "Physical Sciences",
+      "teacher_name": "Dr. Sarah Connor",
+      "room_no": "Physics Lab A"
+    },
+    "9": {
+      "id": 9,
+      "school_id": 1,
+      "class_id": 1,
+      "day_of_week": "Friday",
+      "period_no": 1,
+      "time_slot": "08:30 - 09:20",
+      "subject_name": "Advanced Mathematics",
+      "teacher_name": "Prof. Marcus Brody",
+      "room_no": "Room 301"
+    },
+    "10": {
+      "id": 10,
+      "school_id": 1,
+      "class_id": 1,
+      "day_of_week": "Friday",
+      "period_no": 2,
+      "time_slot": "09:25 - 10:15",
+      "subject_name": "Physical Sciences",
+      "teacher_name": "Dr. Sarah Connor",
+      "room_no": "Physics Lab A"
+    },
+    "11": {
+      "id": 11,
+      "school_id": 2,
+      "class_id": 5,
+      "day_of_week": "Monday",
+      "period_no": 1,
+      "time_slot": "08:30 - 09:20",
+      "subject_name": "Computer Science & AI",
+      "teacher_name": "Mr. Alan Turing",
+      "room_no": "Tech Lab 401"
+    },
+    "12": {
+      "id": 12,
+      "school_id": 2,
+      "class_id": 5,
+      "day_of_week": "Monday",
+      "period_no": 2,
+      "time_slot": "09:25 - 10:15",
+      "subject_name": "Molecular Biology & Genetics",
+      "teacher_name": "Mrs. Rosalind Franklin",
+      "room_no": "Bio Lab 402"
+    },
+    "13": {
+      "id": 13,
+      "school_id": 2,
+      "class_id": 5,
+      "day_of_week": "Tuesday",
+      "period_no": 1,
+      "time_slot": "08:30 - 09:20",
+      "subject_name": "Computer Science & AI",
+      "teacher_name": "Mr. Alan Turing",
+      "room_no": "Tech Lab 401"
+    },
+    "14": {
+      "id": 14,
+      "school_id": 2,
+      "class_id": 5,
+      "day_of_week": "Tuesday",
+      "period_no": 2,
+      "time_slot": "09:25 - 10:15",
+      "subject_name": "Molecular Biology & Genetics",
+      "teacher_name": "Mrs. Rosalind Franklin",
+      "room_no": "Bio Lab 402"
+    },
+    "15": {
+      "id": 15,
+      "school_id": 2,
+      "class_id": 5,
+      "day_of_week": "Wednesday",
+      "period_no": 1,
+      "time_slot": "08:30 - 09:20",
+      "subject_name": "Computer Science & AI",
+      "teacher_name": "Mr. Alan Turing",
+      "room_no": "Tech Lab 401"
+    },
+    "16": {
+      "id": 16,
+      "school_id": 2,
+      "class_id": 5,
+      "day_of_week": "Wednesday",
+      "period_no": 2,
+      "time_slot": "09:25 - 10:15",
+      "subject_name": "Molecular Biology & Genetics",
+      "teacher_name": "Mrs. Rosalind Franklin",
+      "room_no": "Bio Lab 402"
+    },
+    "17": {
+      "id": 17,
+      "school_id": 2,
+      "class_id": 5,
+      "day_of_week": "Thursday",
+      "period_no": 1,
+      "time_slot": "08:30 - 09:20",
+      "subject_name": "Computer Science & AI",
+      "teacher_name": "Mr. Alan Turing",
+      "room_no": "Tech Lab 401"
+    },
+    "18": {
+      "id": 18,
+      "school_id": 2,
+      "class_id": 5,
+      "day_of_week": "Thursday",
+      "period_no": 2,
+      "time_slot": "09:25 - 10:15",
+      "subject_name": "Molecular Biology & Genetics",
+      "teacher_name": "Mrs. Rosalind Franklin",
+      "room_no": "Bio Lab 402"
+    },
+    "19": {
+      "id": 19,
+      "school_id": 2,
+      "class_id": 5,
+      "day_of_week": "Friday",
+      "period_no": 1,
+      "time_slot": "08:30 - 09:20",
+      "subject_name": "Computer Science & AI",
+      "teacher_name": "Mr. Alan Turing",
+      "room_no": "Tech Lab 401"
+    },
+    "20": {
+      "id": 20,
+      "school_id": 2,
+      "class_id": 5,
+      "day_of_week": "Friday",
+      "period_no": 2,
+      "time_slot": "09:25 - 10:15",
+      "subject_name": "Molecular Biology & Genetics",
+      "teacher_name": "Mrs. Rosalind Franklin",
+      "room_no": "Bio Lab 402"
+    },
+    "21": {
+      "id": 21,
+      "school_id": 3,
+      "class_id": 7,
+      "day_of_week": "Monday",
+      "period_no": 1,
+      "time_slot": "09:00 - 09:45",
+      "subject_name": "Language Arts & Reading",
+      "teacher_name": "Mrs. Hannah Abbott",
+      "room_no": "Chapel Hall 101"
+    },
+    "22": {
+      "id": 22,
+      "school_id": 3,
+      "class_id": 7,
+      "day_of_week": "Monday",
+      "period_no": 2,
+      "time_slot": "09:50 - 10:35",
+      "subject_name": "Elementary Mathematics",
+      "teacher_name": "Mr. Jonathan Edwards",
+      "room_no": "Hall 201"
+    },
+    "23": {
+      "id": 23,
+      "school_id": 3,
+      "class_id": 7,
+      "day_of_week": "Tuesday",
+      "period_no": 1,
+      "time_slot": "09:00 - 09:45",
+      "subject_name": "Language Arts & Reading",
+      "teacher_name": "Mrs. Hannah Abbott",
+      "room_no": "Chapel Hall 101"
+    },
+    "24": {
+      "id": 24,
+      "school_id": 3,
+      "class_id": 7,
+      "day_of_week": "Tuesday",
+      "period_no": 2,
+      "time_slot": "09:50 - 10:35",
+      "subject_name": "Elementary Mathematics",
+      "teacher_name": "Mr. Jonathan Edwards",
+      "room_no": "Hall 201"
+    },
+    "25": {
+      "id": 25,
+      "school_id": 3,
+      "class_id": 7,
+      "day_of_week": "Wednesday",
+      "period_no": 1,
+      "time_slot": "09:00 - 09:45",
+      "subject_name": "Language Arts & Reading",
+      "teacher_name": "Mrs. Hannah Abbott",
+      "room_no": "Chapel Hall 101"
+    },
+    "26": {
+      "id": 26,
+      "school_id": 3,
+      "class_id": 7,
+      "day_of_week": "Wednesday",
+      "period_no": 2,
+      "time_slot": "09:50 - 10:35",
+      "subject_name": "Elementary Mathematics",
+      "teacher_name": "Mr. Jonathan Edwards",
+      "room_no": "Hall 201"
+    },
+    "27": {
+      "id": 27,
+      "school_id": 3,
+      "class_id": 7,
+      "day_of_week": "Thursday",
+      "period_no": 1,
+      "time_slot": "09:00 - 09:45",
+      "subject_name": "Language Arts & Reading",
+      "teacher_name": "Mrs. Hannah Abbott",
+      "room_no": "Chapel Hall 101"
+    },
+    "28": {
+      "id": 28,
+      "school_id": 3,
+      "class_id": 7,
+      "day_of_week": "Thursday",
+      "period_no": 2,
+      "time_slot": "09:50 - 10:35",
+      "subject_name": "Elementary Mathematics",
+      "teacher_name": "Mr. Jonathan Edwards",
+      "room_no": "Hall 201"
+    },
+    "29": {
+      "id": 29,
+      "school_id": 3,
+      "class_id": 7,
+      "day_of_week": "Friday",
+      "period_no": 1,
+      "time_slot": "09:00 - 09:45",
+      "subject_name": "Language Arts & Reading",
+      "teacher_name": "Mrs. Hannah Abbott",
+      "room_no": "Chapel Hall 101"
+    },
+    "30": {
+      "id": 30,
+      "school_id": 3,
+      "class_id": 7,
+      "day_of_week": "Friday",
+      "period_no": 2,
+      "time_slot": "09:50 - 10:35",
+      "subject_name": "Elementary Mathematics",
+      "teacher_name": "Mr. Jonathan Edwards",
+      "room_no": "Hall 201"
+    }
+  },
+  "leave_applications": {
+    "1": {
+      "id": 1,
+      "school_id": 1,
+      "teacher_id": 1,
+      "teacher_name": "Prof. Marcus Brody",
+      "leave_type": "Medical Leave",
+      "start_date": "2026-11-20",
+      "end_date": "2026-11-21",
+      "days": 2,
+      "reason": "Ophthalmic consultation and checkup.",
+      "status": "Pending",
+      "applied_at": "2026-11-13",
+      "admin_remarks": null
+    },
+    "2": {
+      "id": 2,
+      "school_id": 2,
+      "teacher_id": 5,
+      "teacher_name": "Mr. Alan Turing",
+      "leave_type": "Conference Leave",
+      "start_date": "2026-12-01",
+      "end_date": "2026-12-03",
+      "days": 3,
+      "reason": "Keynote address at IEEE Education Summit.",
+      "status": "Approved",
+      "applied_at": "2026-11-05",
+      "admin_remarks": "Approved with substitute."
+    }
+  },
+  "transport_routes": {
+    "1": {
+      "id": 1,
+      "school_id": 1,
+      "route_name": "Route 4 - North Hills & Metro Center",
+      "bus_no": "BUS-04",
+      "driver_name": "Mr. Samuel Jackson",
+      "driver_phone": "+1 (555) 444-9988",
+      "stops": "742 Evergreen -> Oak St -> Elm St (Aarav Stop) -> Campus",
+      "current_status": "On Route - Next: Elm St"
+    },
+    "2": {
+      "id": 2,
+      "school_id": 2,
+      "route_name": "Route 1 - Harvard Square & Tech Park",
+      "bus_no": "BUS-11",
+      "driver_name": "Mr. David Miller",
+      "driver_phone": "+1 (555) 222-8877",
+      "stops": "Innovation Blvd -> Harvard Sq (Ethan Stop) -> Campus",
+      "current_status": "Approaching Campus"
+    },
+    "3": {
+      "id": 3,
+      "school_id": 3,
+      "route_name": "Route A - Greenfield Community Bus",
+      "bus_no": "VAN-02",
+      "driver_name": "Mr. Peter Brown",
+      "driver_phone": "+1 (555) 456-1100",
+      "stops": "Church Rd -> Riverbank (Samuel Stop) -> Campus",
+      "current_status": "On Route"
+    }
+  },
+  "audit_logs": {},
+  "online_payments": {
+    "TXN-INIT-001": {
+      "transaction_id": "TXN-INIT-001",
+      "upi_id": "joy.john@ybl",
+      "recipient_name": "Joy John",
+      "school_id": 1,
+      "school_code": "SXIA",
+      "amount": 249.0,
+      "purpose": "Premier Campus Subscription Plan (plan_1000)",
+      "utr_no": "UPI982348102931",
+      "payment_date": "2026-11-15",
+      "status": "Verified",
+      "created_at": "2026-11-15T17:05:02.163176"
+    }
+  }
+}

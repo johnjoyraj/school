@@ -1,0 +1,16 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# OS files
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# Word lock files
+~$*.docx
+
+# IDE files
+.vscode/
+.idea/

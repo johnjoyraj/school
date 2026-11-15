@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "982736451029",
+    "project_id": "edusaas-multi-school-cloud",
+    "storage_bucket": "edusaas-multi-school-cloud.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:982736451029:android:a1b2c3d4e5f67890",
+        "android_client_info": {
+          "package_name": "com.edusaas.schoolapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD-MultiSchoolSaaSBlueprintDemoKey998"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EduSaaS - Staff & Teacher Mobile App</title>
+  <script src="school-sync.js"></script>
+  <style>
+    :root {
+      --primary: #0f766e;
+      --primary-dark: #115e59;
+      --secondary: #0ea5e9;
+      --accent: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --bg: #0f172a;
+      --app-bg: #f8fafc;
+      --border: #e2e8f0;
+      --text: #0f172a;
+      --text-muted: #64748b;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; }
+    body { background: var(--bg); min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 10px; }
+
+    .top-controls {
+      width: 100%; max-width: 440px; display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 10px; color: #94a3b8; font-size: 0.85rem;
+    }
+    .top-controls a { color: #38bdf8; text-decoration: none; font-weight: 600; }
+
+    /* Phone Bezel Container */
+    .phone-container {
+      width: 100%; max-width: 420px; height: 860px; max-height: 94vh;
+      background: var(--app-bg); border-radius: 40px; overflow: hidden;
+      box-shadow: 0 25px 60px rgba(0,0,0,0.6), 0 0 0 10px #1e293b, 0 0 0 12px #334155;
+      display: flex; flex-direction: column; position: relative;
+    }
+
+    .phone-notch {
+      width: 140px; height: 22px; background: #1e293b; border-bottom-left-radius: 14px;
+      border-bottom-right-radius: 14px; margin: 0 auto; display: flex; align-items: center;
+      justify-content: center; z-index: 100;
+    }
+    .speaker { width: 45px; height: 4px; background: #475569; border-radius: 2px; }
+
+    /* App Header */
+    .app-header {
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      color: white; padding: 16px 18px; z-index: 50;
+    }
+    .teacher-badge { font-size: 0.72rem; background: rgba(255,255,255,0.2); padding: 2px 8px; border-radius: 10px; font-weight: 600; }
+    .teacher-profile { display: flex; align-items: center; gap: 12px; margin-top: 10px; }
+    .teacher-avatar {
+      width: 48px; height: 48px; border-radius: 50%; background: #ccfbf1; color: var(--primary-dark);
+      display: flex; align-items: center; justify-content: center; font-size: 1.4rem; font-weight: bold; border: 2px solid white;
+    }
+    .teacher-meta h2 { font-size: 1.05rem; font-weight: 700; }
+    .teacher-meta p { font-size: 0.78rem; opacity: 0.9; }
+
+    /* Screen Body */
+    .screen-body { flex: 1; overflow-y: auto; padding: 16px; position: relative; }
+
+    /* Section Cards */
+    .card {
+      background: white; border-radius: 14px; padding: 16px; margin-bottom: 14px;
+      border: 1px solid var(--border); box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+    }
+    .card-title { font-size: 0.92rem; font-weight: 700; color: #1e293b; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+
+    /* Attendance List */
+    .att-item {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 10px 0; border-bottom: 1px solid #f1f5f9;
+    }
+    .att-item:last-child { border-bottom: none; }
+    .att-st-info { font-size: 0.85rem; font-weight: 600; color: #1e293b; }
+    .att-st-meta { font-size: 0.72rem; color: var(--text-muted); }
+    
+    .btn-toggle-group { display: flex; gap: 4px; }
+    .btn-toggle {
+      width: 32px; height: 32px; border-radius: 6px; border: 1px solid var(--border);
+      background: white; font-size: 0.78rem; font-weight: 700; cursor: pointer; color: #64748b;
+    }
+    .btn-toggle.active-p { background: #dcfce7; color: #15803d; border-color: #86efac; }
+    .btn-toggle.active-a { background: #fee2e2; color: #b91c1c; border-color: #fca5a5; }
+    .btn-toggle.active-l { background: #fef3c7; color: #b45309; border-color: #fde68a; }
+
+    /* Emergency Directory Cards */
+    .st-card {
+      background: white; border-radius: 12px; padding: 12px; margin-bottom: 10px;
+      border: 1px solid var(--border);
+    }
+    .st-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+    .st-call-btn {
+      background: #ecfdf5; color: #059669; border: 1px solid #a7f3d0; padding: 4px 10px;
+      border-radius: 6px; font-size: 0.75rem; text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; gap: 4px;
+    }
+
+    /* Bottom Nav */
+    .bottom-nav {
+      background: white; border-top: 1px solid var(--border); display: flex;
+      justify-content: space-around; padding: 8px 0; z-index: 50;
+    }
+    .nav-btn {
+      background: transparent; border: none; display: flex; flex-direction: column;
+      align-items: center; gap: 3px; font-size: 0.7rem; font-weight: 600; color: var(--text-muted);
+      cursor: pointer; width: 64px;
+    }
+    .nav-btn span { font-size: 1.25rem; }
+    .nav-btn.active { color: var(--primary); }
+
+    .btn-primary {
+      width: 100%; background: var(--primary); color: white; border: none; padding: 12px;
+      border-radius: 10px; font-weight: 700; font-size: 0.88rem; cursor: pointer; margin-top: 12px;
+    }
+    .btn-primary:hover { background: var(--primary-dark); }
+  </style>
+</head>
+<body>
+
+  <div class="top-controls">
+    <div style="display: flex; gap: 12px;">
+      <a href="index.html">← Back to SaaS Suite</a>
+      <a href="signin.html">🔑 Sign In / Switch</a>
+    </div>
+    <span>Staff Client: Flutter (Dart)</span>
+  </div>
+
+  <div class="phone-container">
+    <div class="phone-notch"><div class="speaker"></div></div>
+
+    <!-- App Header -->
+    <div class="app-header">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <span class="teacher-badge">St. Xavier's International</span>
+        <span style="font-size:0.75rem; font-weight:600;">Faculty Portal</span>
+      </div>
+      <div class="teacher-profile">
+        <div class="teacher-avatar">MB</div>
+        <div class="teacher-meta">
+          <h2>Prof. Marcus Brody</h2>
+          <p>Senior Faculty • Mathematics Department</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Screen Body -->
+    <div class="screen-body">
+
+      <!-- View 1: 1-Tap Daily Attendance Engine -->
+      <div id="view-attendance">
+        <div class="card">
+          <div class="card-title">
+            <span>📅 Class Daily Attendance</span>
+            <span style="font-size: 0.75rem; color: var(--primary); font-weight: 600;" id="currentDateDisplay">Today</span>
+          </div>
+          <div style="display: flex; gap: 8px; margin-bottom: 12px;">
+            <select id="attClassSelect" style="flex:1; padding:7px; border:1px solid var(--border); border-radius:6px; font-size:0.82rem;" onchange="loadClassAttendance()">
+              <option value="1">Grade 10 - Section A</option>
+              <option value="2">Grade 10 - Section B</option>
+              <option value="4">Grade 6 - Section A</option>
+            </select>
+          </div>
+
+          <!-- Attendance Students Roster -->
+          <div id="attendance-roster">
+            <!-- Dynamically populated with P / A / L toggles -->
+          </div>
+
+          <button class="btn-primary" onclick="submitAttendanceToServer()">💾 Save & Dispatch Notifications</button>
+        </div>
+      </div>
+
+      <!-- View 2: Student Directory & Emergency Contacts -->
+      <div id="view-directory" style="display:none;">
+        <div class="card">
+          <div class="card-title">
+            <span>📞 Student Emergency Directory</span>
+          </div>
+          <input type="text" id="dirSearch" placeholder="Search student name or roll..." style="width:100%; padding:8px 10px; border:1px solid var(--border); border-radius:6px; font-size:0.82rem; margin-bottom:12px;" oninput="filterDirectory()">
+          <div id="directory-container">
+            <!-- Dynamically populated -->
+          </div>
+        </div>
+      </div>
+
+      <!-- View 3: Homework & Grading Engine -->
+      <div id="view-grading" style="display:none;">
+        <div class="card">
+          <div class="card-title">
+            <span>📝 Post New Homework</span>
+          </div>
+          <form onsubmit="postNewHomework(event)">
+            <input type="text" id="hwTitle" placeholder="Homework Title (e.g. Calculus Problem Set 5)" required style="width:100%; padding:8px; border:1px solid var(--border); border-radius:6px; font-size:0.82rem; margin-bottom:8px;">
+            <textarea id="hwDesc" placeholder="Detailed assignment instructions and guidelines..." required rows="3" style="width:100%; padding:8px; border:1px solid var(--border); border-radius:6px; font-size:0.82rem; margin-bottom:8px;"></textarea>
+            <div style="display:flex; gap:8px; margin-bottom:8px;">
+              <input type="date" id="hwDue" required style="flex:1; padding:6px; border:1px solid var(--border); border-radius:6px; font-size:0.8rem;">
+              <input type="number" id="hwPoints" value="100" placeholder="Points" style="width:80px; padding:6px; border:1px solid var(--border); border-radius:6px; font-size:0.8rem;">
+            </div>
+            <button type="submit" class="btn-primary" style="margin-top:0;">Assign & Push Alert</button>
+          </form>
+        </div>
+
+        <div class="card">
+          <div class="card-title">
+            <span>🔍 Recent Student Submissions</span>
+          </div>
+          <div id="submissions-list">
+            <!-- Dynamically populated -->
+          </div>
+        </div>
+      </div>
+
+      <!-- View 4: Leave Application & Payroll -->
+      <div id="view-leave" style="display:none;">
+        <div class="card">
+          <div class="card-title">
+            <span>📝 Apply for Institutional Leave</span>
+          </div>
+          <form onsubmit="submitLeave(event)">
+            <div style="margin-bottom:8px;">
+              <label style="font-size:0.75rem; color:var(--text-muted);">Leave Type</label>
+              <select id="leaveType" style="width:100%; padding:7px; border:1px solid var(--border); border-radius:6px; font-size:0.82rem;">
+                <option value="Casual Leave">Casual Leave</option>
+                <option value="Medical Leave">Medical Leave</option>
+                <option value="Conference Leave">Academic Symposium / Conference</option>
+              </select>
+            </div>
+            <div style="display:flex; gap:8px; margin-bottom:8px;">
+              <div style="flex:1;">
+                <label style="font-size:0.75rem; color:var(--text-muted);">Start Date</label>
+                <input type="date" id="leaveStart" required style="width:100%; padding:6px; border:1px solid var(--border); border-radius:6px; font-size:0.8rem;">
+              </div>
+              <div style="flex:1;">
+                <label style="font-size:0.75rem; color:var(--text-muted);">End Date</label>
+                <input type="date" id="leaveEnd" required style="width:100%; padding:6px; border:1px solid var(--border); border-radius:6px; font-size:0.8rem;">
+              </div>
+            </div>
+            <div style="margin-bottom:8px;">
+              <label style="font-size:0.75rem; color:var(--text-muted);">Reason / Purpose</label>
+              <textarea id="leaveReason" required rows="2" placeholder="Explain institutional leave reason..." style="width:100%; padding:7px; border:1px solid var(--border); border-radius:6px; font-size:0.82rem;"></textarea>
+            </div>
+            <button type="submit" class="btn-primary" style="margin-top:4px;">Submit for Admin Approval</button>
+          </form>
+        </div>
+
+        <!-- Payroll Card -->
+        <div class="card">
+          <div class="card-title">
+            <span>💵 Monthly Payslip Preview</span>
+            <span style="font-size:0.75rem; background:#dcfce7; color:#15803d; padding:2px 8px; border-radius:10px; font-weight:700;">DEPOSITED</span>
+          </div>
+          <div style="font-size:0.82rem; line-height:1.6; color:#334155;">
+            <div style="display:flex; justify-content:space-between;"><span>Basic Salary:</span> <strong>$4,500.00</strong></div>
+            <div style="display:flex; justify-content:space-between;"><span>Teaching Allowance:</span> <strong>$650.00</strong></div>
+            <div style="display:flex; justify-content:space-between; color:#b91c1c;"><span>Tax & Pension:</span> <strong>-$733.33</strong></div>
+            <hr style="margin:6px 0; border:none; border-top:1px solid var(--border);">
+            <div style="display:flex; justify-content:space-between; font-weight:700; color:var(--primary); font-size:0.95rem;"><span>Net Bank Deposit:</span> <span>$4,416.67</span></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Bottom Nav -->
+    <div class="bottom-nav">
+      <button class="nav-btn active" onclick="switchNav('attendance')">
+        <span>✅</span>
+        <div>Attendance</div>
+      </button>
+      <button class="nav-btn" onclick="switchNav('directory')">
+        <span>👥</span>
+        <div>Students</div>
+      </button>
+      <button class="nav-btn" onclick="switchNav('grading')">
+        <span>📝</span>
+        <div>Grading</div>
+      </button>
+      <button class="nav-btn" onclick="switchNav('leave')">
+        <span>🏖️</span>
+        <div>Leave/Pay</div>
+      </button>
+    </div>
+
+  </div>
+
+  <script>
+    const API_BASE = window.location.origin.includes('8088') ? window.location.origin : 'http://localhost:8088';
+    let currentSchoolId = 1;
+    let currentTeacherId = 1;
+    let currentTeacherName = "Prof. Marcus Brody";
+    let studentsRoster = [];
+
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('school_id')) {
+      currentSchoolId = parseInt(urlParams.get('school_id'));
+    }
+    if (urlParams.get('teacher_id')) {
+      currentTeacherId = parseInt(urlParams.get('teacher_id'));
+    }
+
+    async function loadTeacherProfile() {
+      try {
+        const scRes = await fetch(`${API_BASE}/api/school?school_id=${currentSchoolId}`);
+        if (scRes.ok) {
+          const sc = await scRes.json();
+          document.querySelector('.teacher-badge').innerText = sc.name;
+        }
+
+        const tchRes = await fetch(`${API_BASE}/api/teachers?school_id=${currentSchoolId}`);
+        if (tchRes.ok) {
+          const teachers = await tchRes.json();
+          const target = teachers.find(t => t.id === currentTeacherId) || teachers[0];
+          if (target) {
+            currentTeacherId = target.id;
+            currentTeacherName = target.name;
+            document.querySelector('.teacher-meta h2').innerText = target.name;
+            document.querySelector('.teacher-meta p').innerText = `${target.designation || 'Faculty'} • ${target.subject_specialization}`;
+            const initials = target.name.split(' ').map(w => w[0]).filter(Boolean).slice(0, 2).join('');
+            document.querySelector('.teacher-avatar').innerText = initials || 'T';
+          }
+        }
+
+        const clsRes = await fetch(`${API_BASE}/api/classes?school_id=${currentSchoolId}`);
+        if (clsRes.ok) {
+          const classes = await clsRes.json();
+          const sel = document.getElementById('attClassSelect');
+          sel.innerHTML = '';
+          classes.forEach(c => {
+            const opt = document.createElement('option');
+            opt.value = c.id;
+            opt.text = `${c.name} - Section ${c.section} (${c.room || 'Main'})`;
+            sel.appendChild(opt);
+          });
+        }
+      } catch (e) {
+        console.error("Error loading teacher profile", e);
+      }
+    }
+
+    function switchNav(view) {
+      document.getElementById('view-attendance').style.display = 'none';
+      document.getElementById('view-directory').style.display = 'none';
+      document.getElementById('view-grading').style.display = 'none';
+      document.getElementById('view-leave').style.display = 'none';
+
+      document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+
+      if (view === 'attendance') {
+        document.getElementById('view-attendance').style.display = 'block';
+        document.querySelectorAll('.nav-btn')[0].classList.add('active');
+      } else if (view === 'directory') {
+        document.getElementById('view-directory').style.display = 'block';
+        document.querySelectorAll('.nav-btn')[1].classList.add('active');
+      } else if (view === 'grading') {
+        document.getElementById('view-grading').style.display = 'block';
+        document.querySelectorAll('.nav-btn')[2].classList.add('active');
+      } else if (view === 'leave') {
+        document.getElementById('view-leave').style.display = 'block';
+        document.querySelectorAll('.nav-btn')[3].classList.add('active');
+      }
+    }
+
+    async function loadClassAttendance() {
+      const classId = document.getElementById('attClassSelect').value;
+      try {
+        const res = await fetch(`${API_BASE}/api/students?school_id=${currentSchoolId}&class_id=${classId}`);
+        studentsRoster = await res.json();
+        renderAttendanceSheet();
+        renderDirectory(studentsRoster);
+      } catch (e) {
+        console.error("Error loading roster", e);
+      }
+    }
+
+    function renderAttendanceSheet() {
+      const container = document.getElementById('attendance-roster');
+      container.innerHTML = '';
+
+      studentsRoster.forEach(s => {
+        const div = document.createElement('div');
+        div.className = 'att-item';
+        div.innerHTML = `
+          <div>
+            <div class="att-st-info">${s.name}</div>
+            <div class="att-st-meta">Roll #${s.roll_no} • ${s.admission_no}</div>
+          </div>
+          <div class="btn-toggle-group" data-student-id="${s.id}">
+            <button class="btn-toggle active-p" onclick="setAttStatus(${s.id}, 'Present', event)">P</button>
+            <button class="btn-toggle" onclick="setAttStatus(${s.id}, 'Absent', event)">A</button>
+            <button class="btn-toggle" onclick="setAttStatus(${s.id}, 'Late', event)">L</button>
+          </div>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function setAttStatus(stId, status, ev) {
+      const group = ev.currentTarget.parentElement;
+      group.querySelectorAll('.btn-toggle').forEach(b => {
+        b.className = 'btn-toggle';
+      });
+      if (status === 'Present') ev.currentTarget.classList.add('active-p');
+      if (status === 'Absent') ev.currentTarget.classList.add('active-a');
+      if (status === 'Late') ev.currentTarget.classList.add('active-l');
+    }
+
+    async function submitAttendanceToServer() {
+      const classId = parseInt(document.getElementById('attClassSelect').value);
+      const records = [];
+      document.querySelectorAll('#attendance-roster .btn-toggle-group').forEach(group => {
+        const stId = parseInt(group.getAttribute('data-student-id'));
+        let status = 'Present';
+        if (group.querySelector('.active-a')) status = 'Absent';
+        if (group.querySelector('.active-l')) status = 'Late';
+        records.push({ student_id: stId, status: status });
+      });
+
+      try {
+        const res = await fetch(`${API_BASE}/api/attendance`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'X-School-Id': currentSchoolId },
+          body: JSON.stringify({
+            class_id: classId,
+            marked_by: "Prof. Marcus Brody",
+            records: records
+          })
+        });
+        const d = await res.json();
+        alert(d.message || "Attendance recorded and synced to cloud!");
+      } catch (e) {
+        alert("Failed to submit attendance.");
+      }
+    }
+
+    function renderDirectory(students) {
+      const container = document.getElementById('directory-container');
+      container.innerHTML = '';
+
+      students.forEach(s => {
+        const div = document.createElement('div');
+        div.className = 'st-card';
+        div.innerHTML = `
+          <div class="st-header">
+            <strong>${s.name}</strong>
+            <span style="font-size:0.72rem; background:#e0f2fe; color:#0369a1; padding:2px 6px; border-radius:4px;">Roll #${s.roll_no}</span>
+          </div>
+          <div style="font-size:0.78rem; color:var(--text-muted); line-height:1.5;">
+            <div>Guardian: ${s.parent_name || 'Mr. Sharma'}</div>
+            <div>Blood Group: <strong style="color:#b91c1c;">${s.blood_group || 'O+'}</strong></div>
+          </div>
+          <div style="margin-top:8px; display:flex; justify-content:space-between; align-items:center;">
+            <a href="tel:${s.emergency_phone || '5557778899'}" class="st-call-btn">
+              📞 Call Guardian: ${s.emergency_phone || '555-777-8899'}
+            </a>
+          </div>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function filterDirectory() {
+      const query = document.getElementById('dirSearch').value.toLowerCase();
+      const filtered = studentsRoster.filter(s => s.name.toLowerCase().includes(query) || String(s.roll_no).includes(query));
+      renderDirectory(filtered);
+    }
+
+    async function loadSubmissions() {
+      try {
+        const res = await fetch(`${API_BASE}/api/homework/submissions?school_id=${currentSchoolId}`);
+        const subs = await res.json();
+        const container = document.getElementById('submissions-list');
+        container.innerHTML = '';
+
+        subs.forEach(s => {
+          const div = document.createElement('div');
+          div.style.background = '#f8fafc';
+          div.style.border = '1px solid var(--border)';
+          div.style.borderRadius = '8px';
+          div.style.padding = '10px';
+          div.style.marginBottom = '8px';
+          div.innerHTML = `
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <strong style="font-size:0.85rem; color:#1e293b;">${s.student_name}</strong>
+              <span style="font-size:0.7rem; background:#dcfce7; color:#15803d; padding:2px 6px; border-radius:4px;">${s.status}</span>
+            </div>
+            <p style="font-size:0.78rem; color:#475569; margin:4px 0;">"${s.submission_text || 'Completed calculation sheets'}"</p>
+            <div style="font-size:0.75rem; color:var(--primary); font-weight:600;">Grade: ${s.marks_obtained ? s.marks_obtained + '/100' : 'Pending Evaluation'}</div>
+          `;
+          container.appendChild(div);
+        });
+      } catch (e) {
+        console.error("Error loading submissions", e);
+      }
+    }
+
+    async function postNewHomework(e) {
+      e.preventDefault();
+      const payload = {
+        class_id: 1,
+        subject_id: 1,
+        teacher_name: "Prof. Marcus Brody",
+        title: document.getElementById('hwTitle').value,
+        description: document.getElementById('hwDesc').value,
+        due_date: document.getElementById('hwDue').value,
+        points: parseInt(document.getElementById('hwPoints').value)
+      };
+
+      try {
+        const res = await fetch(`${API_BASE}/api/homework`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'X-School-Id': currentSchoolId },
+          body: JSON.stringify(payload)
+        });
+        const d = await res.json();
+        alert(d.message || "Homework posted!");
+        document.getElementById('hwTitle').value = '';
+        document.getElementById('hwDesc').value = '';
+      } catch (e) {
+        alert("Failed to post homework.");
+      }
+    }
+
+    async function submitLeave(e) {
+      e.preventDefault();
+      const payload = {
+        teacher_id: 1,
+        teacher_name: "Prof. Marcus Brody",
+        leave_type: document.getElementById('leaveType').value,
+        start_date: document.getElementById('leaveStart').value,
+        end_date: document.getElementById('leaveEnd').value,
+        days: 2,
+        reason: document.getElementById('leaveReason').value
+      };
+
+      try {
+        const res = await fetch(`${API_BASE}/api/leaves`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'X-School-Id': currentSchoolId },
+          body: JSON.stringify(payload)
+        });
+        const d = await res.json();
+        alert(d.message || "Leave request submitted to administration!");
+      } catch (e) {
+        alert("Failed to submit leave.");
+      }
+    }
+
+    window.onload = async function() {
+      const today = new Date().toISOString().split('T')[0];
+      document.getElementById('currentDateDisplay').innerText = today;
+      document.getElementById('hwDue').value = today;
+      document.getElementById('leaveStart').value = today;
+      document.getElementById('leaveEnd').value = today;
+      await loadTeacherProfile();
+      loadClassAttendance();
+      loadSubmissions();
+    };
+  </script>
+</body>
+</html>

@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EduSaaS - Global Super Admin Control Center</title>
+  <script src="school-sync.js"></script>
+  <style>
+    :root {
+      --primary: #4338ca;
+      --primary-hover: #3730a3;
+      --secondary: #0ea5e9;
+      --accent: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --bg: #0f172a;
+      --card-bg: #1e293b;
+      --card-border: #334155;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; }
+    body { background: var(--bg); color: var(--text); min-height: 100vh; display: flex; flex-direction: column; }
+    
+    /* Top Bar */
+    .topbar {
+      background: rgba(30, 41, 59, 0.95);
+      border-bottom: 1px solid var(--card-border);
+      padding: 14px 28px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(10px);
+    }
+    .brand { display: flex; align-items: center; gap: 12px; font-weight: 700; font-size: 1.25rem; letter-spacing: -0.5px; }
+    .brand span { color: var(--secondary); }
+    .badge-saas {
+      background: linear-gradient(135deg, #4338ca, #6366f1);
+      color: white;
+      font-size: 0.75rem;
+      padding: 3px 10px;
+      border-radius: 20px;
+      text-transform: uppercase;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+    }
+    .user-pill {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: #0f172a;
+      padding: 6px 14px;
+      border-radius: 30px;
+      border: 1px solid var(--card-border);
+      font-size: 0.85rem;
+    }
+    .user-avatar {
+      width: 28px; height: 28px; background: var(--primary); color: white;
+      border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold;
+    }
+    .home-btn {
+      background: transparent; color: var(--text-muted); border: 1px solid var(--card-border);
+      padding: 6px 12px; border-radius: 6px; cursor: pointer; text-decoration: none; font-size: 0.85rem;
+      display: inline-flex; align-items: center; gap: 6px;
+    }
+    .home-btn:hover { background: #334155; color: white; }
+
+    /* Layout */
+    .container { max-width: 1300px; width: 100%; margin: 25px auto; padding: 0 20px; flex: 1; }
+
+    /* KPI Grid */
+    .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 18px; margin-bottom: 28px; }
+    .kpi-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 20px;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.2s, border-color 0.2s;
+    }
+    .kpi-card:hover { transform: translateY(-2px); border-color: var(--secondary); }
+    .kpi-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+    }
+    .kpi-label { font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
+    .kpi-val { font-size: 1.85rem; font-weight: 700; color: #ffffff; }
+    .kpi-sub { font-size: 0.8rem; margin-top: 6px; display: flex; align-items: center; gap: 6px; }
+    .text-up { color: #34d399; }
+    .text-safe { color: var(--secondary); }
+
+    /* Action Nav Tabs */
+    .tab-bar {
+      display: flex;
+      gap: 10px;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      padding: 6px;
+      border-radius: 10px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+    .tab-btn {
+      background: transparent; border: none; color: var(--text-muted);
+      padding: 10px 18px; border-radius: 8px; cursor: pointer; font-weight: 600;
+      font-size: 0.9rem; transition: all 0.2s; display: flex; align-items: center; gap: 8px;
+    }
+    .tab-btn:hover { color: white; background: rgba(255,255,255,0.05); }
+    .tab-btn.active { background: var(--primary); color: white; box-shadow: 0 2px 8px rgba(67, 56, 202, 0.4); }
+
+    /* Content Cards */
+    .panel-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 14px;
+      padding: 26px;
+      margin-bottom: 24px;
+    }
+    .panel-header {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 20px; padding-bottom: 14px; border-bottom: 1px solid var(--card-border);
+      flex-wrap: wrap; gap: 12px;
+    }
+    .panel-header h2 { font-size: 1.3rem; display: flex; align-items: center; gap: 10px; }
+    
+    .btn {
+      background: var(--primary); color: white; border: none; padding: 9px 16px;
+      border-radius: 8px; font-weight: 600; font-size: 0.88rem; cursor: pointer;
+      display: inline-flex; align-items: center; gap: 8px; transition: background 0.2s;
+    }
+    .btn:hover { background: var(--primary-hover); }
+    .btn-secondary { background: #334155; color: white; }
+    .btn-secondary:hover { background: #475569; }
+    .btn-success { background: var(--accent); }
+    .btn-success:hover { background: #059669; }
+
+    /* Tables */
+    .table-responsive { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; text-align: left; font-size: 0.9rem; }
+    th {
+      background: #0f172a; color: var(--text-muted); font-weight: 600; padding: 12px 16px;
+      border-bottom: 1px solid var(--card-border); text-transform: uppercase; font-size: 0.78rem; letter-spacing: 0.5px;
+    }
+    td { padding: 14px 16px; border-bottom: 1px solid rgba(51, 65, 85, 0.5); vertical-align: middle; }
+    tr:hover td { background: rgba(255,255,255,0.02); }
+
+    .status-badge {
+      padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 700;
+      display: inline-block; text-transform: uppercase;
+    }
+    .status-active { background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.4); }
+    .status-plan { background: rgba(14, 165, 233, 0.2); color: #38bdf8; border: 1px solid rgba(14, 165, 233, 0.4); }
+
+    /* Plans Grid */
+    .plans-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
+    .plan-card {
+      background: #0f172a; border: 1px solid var(--card-border); border-radius: 12px;
+      padding: 24px; display: flex; flex-direction: column; justify-content: space-between; position: relative;
+    }
+    .plan-card.featured { border-color: var(--primary); box-shadow: 0 0 20px rgba(99, 102, 241, 0.15); }
+    .plan-card.featured::after {
+      content: 'POPULAR CHOICE'; position: absolute; top: -10px; right: 20px;
+      background: var(--primary); font-size: 0.7rem; font-weight: 800; padding: 2px 8px; border-radius: 10px;
+    }
+    .plan-name { font-size: 1.2rem; font-weight: 700; margin-bottom: 6px; }
+    .plan-price { font-size: 1.8rem; font-weight: 800; color: #38bdf8; margin-bottom: 16px; }
+    .plan-price span { font-size: 0.85rem; color: var(--text-muted); font-weight: normal; }
+    .plan-features { list-style: none; margin-bottom: 20px; }
+    .plan-features li { padding: 6px 0; font-size: 0.88rem; color: #cbd5e1; display: flex; align-items: center; gap: 8px; }
+
+    /* Modal Form */
+    .modal-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.75); display: none;
+      align-items: center; justify-content: center; z-index: 1000; backdrop-filter: blur(4px);
+    }
+    .modal {
+      background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 16px;
+      max-width: 580px; width: 90%; padding: 28px; box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+    }
+    .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+    .modal-close { background: transparent; border: none; color: var(--text-muted); font-size: 1.5rem; cursor: pointer; }
+    .form-group { margin-bottom: 16px; }
+    .form-group label { display: block; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 6px; }
+    .form-control {
+      width: 100%; background: #0f172a; border: 1px solid var(--card-border); color: white;
+      padding: 10px 14px; border-radius: 8px; font-size: 0.9rem;
+    }
+    .form-control:focus { outline: none; border-color: var(--secondary); }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+    /* Resource Meter */
+    .meter-bar { width: 100%; height: 8px; background: #334155; border-radius: 4px; overflow: hidden; margin-top: 6px; }
+    .meter-fill { height: 100%; background: linear-gradient(90deg, var(--secondary), var(--accent)); border-radius: 4px; }
+
+    /* Notification Toast */
+    #toast {
+      position: fixed; bottom: 25px; right: 25px; background: #065f46; color: white;
+      padding: 12px 20px; border-radius: 10px; border: 1px solid #10b981;
+      display: none; box-shadow: 0 8px 20px rgba(0,0,0,0.4); z-index: 2000; font-size: 0.9rem;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Bar -->
+  <header class="topbar">
+    <div class="brand">
+      <span style="font-size: 1.5rem;">🏫</span>
+      <div>EduSaaS <span>Global Super Admin</span></div>
+      <span class="badge-saas">SaaS Core v2.4</span>
+    </div>
+    <div style="display: flex; align-items: center; gap: 14px;">
+      <a href="index.html" class="home-btn">🏠 Suite Master</a>
+      <div class="user-pill">
+        <div class="user-avatar">SA</div>
+        <span>Platform Super Admin</span>
+      </div>
+    </div>
+  </header>
+
+  <div class="container">
+
+    <!-- KPI Summary Row -->
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-label">Onboarded School Tenants</div>
+        <div class="kpi-val" id="kpi-schools">3</div>
+        <div class="kpi-sub"><span class="text-up">↑ 100% active</span> across 3 regions</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Monthly SaaS Revenue (MRR)</div>
+        <div class="kpi-val" id="kpi-mrr">$1,495</div>
+        <div class="kpi-sub"><span class="text-up">↑ $17.9K ARR</span> run rate</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Enrolled Students Managed</div>
+        <div class="kpi-val" id="kpi-students">1,840</div>
+        <div class="kpi-sub"><span class="text-safe">● 4 Campuses</span> across instances</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Platform Infrastructure</div>
+        <div class="kpi-val" style="color: #34d399;">99.98%</div>
+        <div class="kpi-sub"><span class="text-safe">● 14ms API Latency</span> • FCM Synced</div>
+      </div>
+    </div>
+
+    <!-- Navigation Tabs -->
+    <div class="tab-bar">
+      <button class="tab-btn active" onclick="switchTab('tenants', event)">🏢 School Tenants Directory</button>
+      <button class="tab-btn" onclick="switchTab('plans', event)">💳 Subscription Tier Packages</button>
+      <button class="tab-btn" onclick="switchTab('infra', event)">📊 Cloud Resources & Analytics</button>
+      <button class="tab-btn" onclick="switchTab('audit', event)">📜 Master Audit Log</button>
+    </div>
+
+    <!-- Tab 1: Tenants List -->
+    <div id="tab-tenants" class="panel-card">
+      <div class="panel-header">
+        <div>
+          <h2>🏢 Provisioned School Institutions</h2>
+          <p style="color: var(--text-muted); font-size: 0.88rem; margin-top: 4px;">Logical multi-tenant isolation via dedicated database routing and school_id partitioning.</p>
+        </div>
+        <div style="display: flex; gap: 10px;">
+          <button class="btn btn-secondary" onclick="loadSchools()">🔄 Refresh</button>
+          <button class="btn btn-success" onclick="openOnboardModal()">➕ Provision New School Tenant</button>
+        </div>
+      </div>
+
+      <div class="table-responsive">
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Institution Name</th>
+              <th>Tenant Code</th>
+              <th>Dedicated Subdomain</th>
+              <th>Lead Administrator</th>
+              <th>Subscription Tier</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="schools-table-body">
+            <!-- Dynamically populated -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Tab 2: Subscription Plans -->
+    <div id="tab-plans" class="panel-card" style="display:none;">
+      <div class="panel-header">
+        <div>
+          <h2>💳 SaaS Subscription Tiers by Student Capacity</h2>
+          <p style="color: var(--text-muted); font-size: 0.88rem; margin-top: 4px;">Dynamic pricing & license allocations scaled for 200, 600, 1000, 2000, and 5000 enrolled children.</p>
+        </div>
+      </div>
+
+      <div class="plans-grid">
+        <div class="plan-card">
+          <div>
+            <div class="plan-name">Micro Academy</div>
+            <div class="plan-price">$49 <span>/ month</span></div>
+            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 14px;">Capacity: <strong>Up to 200 Students</strong></p>
+            <ul class="plan-features">
+              <li>✓ 200 Enrolled Students Limit</li>
+              <li>✓ 15 Faculty & Staff Accounts</li>
+              <li>✓ Daily Attendance & Gradebook</li>
+              <li>✓ Student & Teacher Mobile Web App</li>
+            </ul>
+          </div>
+          <button class="btn btn-secondary" style="width: 100%; justify-content: center;">Plan Active</button>
+        </div>
+
+        <div class="plan-card">
+          <div>
+            <div class="plan-name">Standard School</div>
+            <div class="plan-price">$129 <span>/ month</span></div>
+            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 14px;">Capacity: <strong>Up to 600 Students</strong></p>
+            <ul class="plan-features">
+              <li>✓ 600 Enrolled Students Limit</li>
+              <li>✓ 45 Faculty Accounts</li>
+              <li>✓ Parent Multi-Child Switcher</li>
+              <li>✓ Homework & Assignment Submissions</li>
+            </ul>
+          </div>
+          <button class="btn btn-secondary" style="width: 100%; justify-content: center;">Plan Active</button>
+        </div>
+
+        <div class="plan-card featured">
+          <div>
+            <div class="plan-name">Premier Campus</div>
+            <div class="plan-price">$249 <span>/ month</span></div>
+            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 14px;">Capacity: <strong>Up to 1,000 Students</strong></p>
+            <ul class="plan-features">
+              <li>✓ 1,000 Enrolled Students Limit</li>
+              <li>✓ 75 Faculty Accounts</li>
+              <li>✓ Fee Collection & Instant Receipts</li>
+              <li>✓ Timetables & Staff Leave Workflow</li>
+              <li>✓ Push Notification Broadcasts</li>
+            </ul>
+          </div>
+          <button class="btn" style="width: 100%; justify-content: center;">Default Tier</button>
+        </div>
+
+        <div class="plan-card">
+          <div>
+            <div class="plan-name">Advanced Institution</div>
+            <div class="plan-price">$449 <span>/ month</span></div>
+            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 14px;">Capacity: <strong>Up to 2,000 Students</strong></p>
+            <ul class="plan-features">
+              <li>✓ 2,000 Enrolled Students Limit</li>
+              <li>✓ 150 Faculty & Staff Accounts</li>
+              <li>✓ Live Bus GPS Transport Tracker</li>
+              <li>✓ Dedicated Institutional Subdomain</li>
+            </ul>
+          </div>
+          <button class="btn btn-secondary" style="width: 100%; justify-content: center;">Plan Active</button>
+        </div>
+
+        <div class="plan-card">
+          <div>
+            <div class="plan-name">Enterprise Multi-Campus</div>
+            <div class="plan-price">$899 <span>/ month</span></div>
+            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 14px;">Capacity: <strong>Up to 5,000 Students</strong></p>
+            <ul class="plan-features">
+              <li>✓ 5,000 Enrolled Students Limit</li>
+              <li>✓ Unlimited Faculty Accounts</li>
+              <li>✓ White-Label Flutter Mobile App</li>
+              <li>✓ Dedicated Database Shard & API Access</li>
+            </ul>
+          </div>
+          <button class="btn btn-secondary" style="width: 100%; justify-content: center;">Plan Active</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab 3: Infrastructure & Analytics -->
+    <div id="tab-infra" class="panel-card" style="display:none;">
+      <div class="panel-header">
+        <div>
+          <h2>📊 Cloud Resource Distribution & Multi-Tenant Analytics</h2>
+          <p style="color: var(--text-muted); font-size: 0.88rem;">Real-time server metrics across the multi-school cluster.</p>
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px;">
+        <div style="background: #0f172a; padding: 20px; border-radius: 10px; border: 1px solid var(--card-border);">
+          <h3 style="font-size: 1rem; margin-bottom: 14px;">💾 Database Tenant Storage</h3>
+          <div style="margin-bottom: 12px;">
+            <div style="display: flex; justify-content: space-between; font-size: 0.85rem;">
+              <span>St. Xavier's International</span>
+              <span>42.4 MB (48%)</span>
+            </div>
+            <div class="meter-bar"><div class="meter-fill" style="width: 48%;"></div></div>
+          </div>
+          <div style="margin-bottom: 12px;">
+            <div style="display: flex; justify-content: space-between; font-size: 0.85rem;">
+              <span>Apex Global High School</span>
+              <span>28.1 MB (32%)</span>
+            </div>
+            <div class="meter-bar"><div class="meter-fill" style="width: 32%;"></div></div>
+          </div>
+          <div style="margin-bottom: 12px;">
+            <div style="display: flex; justify-content: space-between; font-size: 0.85rem;">
+              <span>Grace Model Public School</span>
+              <span>17.5 MB (20%)</span>
+            </div>
+            <div class="meter-bar"><div class="meter-fill" style="width: 20%;"></div></div>
+          </div>
+        </div>
+
+        <div style="background: #0f172a; padding: 20px; border-radius: 10px; border: 1px solid var(--card-border);">
+          <h3 style="font-size: 1rem; margin-bottom: 14px;">🔔 Firebase Push Messaging Volume</h3>
+          <div style="font-size: 2rem; font-weight: 700; color: #38bdf8;">14,820</div>
+          <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 4px;">Push notifications dispatched this month (Attendance, Homework alerts, Emergency announcements).</p>
+          <div style="margin-top: 15px; font-size: 0.82rem; color: #34d399;">● Delivery Success Rate: 99.4%</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab 4: Audit Logs -->
+    <div id="tab-audit" class="panel-card" style="display:none;">
+      <div class="panel-header">
+        <h2>📜 System Global Audit Log</h2>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>Timestamp</th>
+            <th>Role</th>
+            <th>Action</th>
+            <th>Operational Details</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>2026-11-14 21:15:00</td>
+            <td><span class="status-badge status-plan">SUPER ADMIN</span></td>
+            <td>PROVISION_SCHOOL</td>
+            <td>Onboarded St. Xavier's International Academy under Enterprise tier</td>
+          </tr>
+          <tr>
+            <td>2026-11-14 21:18:22</td>
+            <td><span class="status-badge status-active">SCHOOL ADMIN</span></td>
+            <td>PUBLISH_TIMETABLE</td>
+            <td>Published Term 1 Master Schedule for Grade 10-A</td>
+          </tr>
+          <tr>
+            <td>2026-11-14 21:20:10</td>
+            <td><span class="status-badge status-plan">TEACHER</span></td>
+            <td>RECORD_ATTENDANCE</td>
+            <td>Marked daily attendance for Grade 10-A (100% submission)</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+
+  <!-- Onboard Modal -->
+  <div id="onboardModal" class="modal-overlay">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>🏢 Onboard New School Tenant</h3>
+        <button class="modal-close" onclick="closeOnboardModal()">&times;</button>
+      </div>
+      <form id="onboardForm" onsubmit="submitOnboardSchool(event)">
+        <div class="form-group">
+          <label>School / Institution Name *</label>
+          <input type="text" id="schoolName" class="form-control" required placeholder="e.g. Cambridge International School">
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Tenant Code (Unique) *</label>
+            <input type="text" id="schoolCode" class="form-control" required placeholder="e.g. CIS" style="text-transform: uppercase;">
+          </div>
+          <div class="form-group">
+            <label>Subdomain *</label>
+            <input type="text" id="schoolDomain" class="form-control" required placeholder="e.g. cis.schoolsaas.com">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Principal / Admin Name *</label>
+            <input type="text" id="adminName" class="form-control" required placeholder="e.g. Dr. Arthur Pendelton">
+          </div>
+          <div class="form-group">
+            <label>Admin Email *</label>
+            <input type="email" id="adminEmail" class="form-control" required placeholder="admin@cis.edu">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Subscription Tier (Child Limit) *</label>
+            <select id="schoolPlan" class="form-control">
+              <option value="plan_200">Micro Academy (Up to 200 Students - $49/mo)</option>
+              <option value="plan_600">Standard School (Up to 600 Students - $129/mo)</option>
+              <option value="plan_1000" selected>Premier Campus (Up to 1,000 Students - $249/mo)</option>
+              <option value="plan_2000">Advanced Institution (Up to 2,000 Students - $449/mo)</option>
+              <option value="plan_5000">Enterprise Multi-Campus (Up to 5,000 Students - $899/mo)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>School Access Password *</label>
+            <input type="text" id="schoolPassword" class="form-control" value="school123" required>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Campus Phone</label>
+            <input type="text" id="schoolPhone" class="form-control" placeholder="+1 (555) 000-1122">
+          </div>
+          <div class="form-group">
+            <label>Physical Campus Address</label>
+            <input type="text" id="schoolAddress" class="form-control" placeholder="100 University Drive, Springfield">
+          </div>
+        </div>
+        <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
+          <button type="button" class="btn btn-secondary" onclick="closeOnboardModal()">Cancel</button>
+          <button type="submit" class="btn btn-success">🚀 Provision School Tenant</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="toast">Notification</div>
+
+  <script>
+    const API_BASE = window.location.origin.includes('8088') ? window.location.origin : 'http://localhost:8088';
+
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.innerText = msg;
+      t.style.display = 'block';
+      setTimeout(() => t.style.display = 'none', 3500);
+    }
+
+    function switchTab(tabId, ev) {
+      document.querySelectorAll('.panel-card').forEach(el => el.style.display = 'none');
+      document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+      document.getElementById('tab-' + tabId).style.display = 'block';
+      ev.currentTarget.classList.add('active');
+    }
+
+    function openOnboardModal() {
+      document.getElementById('onboardModal').style.display = 'flex';
+    }
+    function closeOnboardModal() {
+      document.getElementById('onboardModal').style.display = 'none';
+    }
+
+    async function loadStats() {
+      try {
+        const res = await fetch(`${API_BASE}/api/super/stats`);
+        if (res.ok) {
+          const data = await res.json();
+          document.getElementById('kpi-schools').innerText = data.total_schools;
+          document.getElementById('kpi-mrr').innerText = `$${data.monthly_recurring_revenue.toLocaleString()}`;
+        }
+      } catch (e) {
+        console.log("Using cached stats");
+      }
+    }
+
+    async function loadSchools() {
+      const tbody = document.getElementById('schools-table-body');
+      tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;">Loading tenants...</td></tr>';
+      
+      try {
+        const res = await fetch(`${API_BASE}/api/super/schools`);
+        let schools = [];
+        if (res.ok) {
+          schools = await res.json();
+        } else {
+          schools = getMockSchools();
+        }
+        renderSchools(schools);
+      } catch (err) {
+        renderSchools(getMockSchools());
+      }
+    }
+
+    function getMockSchools() {
+      return [
+        { id: 1, name: "St. Xavier's International Academy", code: "SXIA", domain: "sx-academy.edu", admin_name: "Dr. Anthony Morris", plan_id: "enterprise", status: "active" },
+        { id: 2, name: "Apex Global High School", code: "APEX", domain: "apex-global.org", admin_name: "Mrs. Eleanor Vance", plan_id: "pro", status: "active" },
+        { id: 3, name: "Grace Model Public School", code: "GMPS", domain: "gracemodel.org", admin_name: "Rev. David Wilson", plan_id: "starter", status: "active" }
+      ];
+    }
+
+    function renderSchools(schools) {
+      const tbody = document.getElementById('schools-table-body');
+      tbody.innerHTML = '';
+      schools.forEach(s => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td><strong>#${s.id}</strong></td>
+          <td>
+            <div style="font-weight: 600; color: #ffffff;">${s.name}</div>
+            <div style="font-size: 0.78rem; color: var(--text-muted);">${s.address || 'Main Campus'}</div>
+          </td>
+          <td><code>${s.code}</code></td>
+          <td><span style="color: var(--secondary);">${s.domain}</span></td>
+          <td>${s.admin_name}</td>
+          <td><span class="status-badge status-plan">${(s.plan_id || 'PRO').toUpperCase()}</span></td>
+          <td><span class="status-badge status-active">${(s.status || 'ACTIVE').toUpperCase()}</span></td>
+          <td>
+            <a href="school_admin.html?school_id=${s.id}" class="btn" style="padding: 4px 10px; font-size: 0.8rem; text-decoration: none;">
+              Open School Admin ↗
+            </a>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    async function submitOnboardSchool(e) {
+      e.preventDefault();
+      const payload = {
+        name: document.getElementById('schoolName').value,
+        code: document.getElementById('schoolCode').value,
+        domain: document.getElementById('schoolDomain').value,
+        admin_name: document.getElementById('adminName').value,
+        admin_email: document.getElementById('adminEmail').value,
+        password: document.getElementById('schoolPassword').value,
+        plan_id: document.getElementById('schoolPlan').value,
+        phone: document.getElementById('schoolPhone').value,
+        address: document.getElementById('schoolAddress').value
+      };
+
+      try {
+        const res = await fetch(`${API_BASE}/api/super/schools`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const result = await res.json();
+        closeOnboardModal();
+        showToast(result.message || 'Tenant school successfully provisioned!');
+        document.getElementById('onboardForm').reset();
+        loadSchools();
+        loadStats();
+      } catch (err) {
+        alert('Server unreachable. Running in offline preview mode.');
+        closeOnboardModal();
+      }
+    }
+
+    // Auto-fill domain as code changes
+    document.getElementById('schoolCode').addEventListener('input', function(e) {
+      const val = e.target.value.toLowerCase().replace(/[^a-z0-9]/g, '');
+      if (val) {
+        document.getElementById('schoolDomain').value = `${val}.schoolsaas.com`;
+      }
+    });
+
+    window.onload = function() {
+      loadStats();
+      loadSchools();
+    };
+  </script>
+</body>
+</html>

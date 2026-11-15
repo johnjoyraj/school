@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EduSaaS - Student & Parent Mobile App</title>
+  <script src="school-sync.js"></script>
+  <style>
+    :root {
+      --primary: #4f46e5;
+      --primary-dark: #3730a3;
+      --secondary: #06b6d4;
+      --accent: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --bg: #0f172a;
+      --app-bg: #f8fafc;
+      --card: #ffffff;
+      --text: #1e293b;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; -webkit-tap-highlight-color: transparent; }
+    body { background: var(--bg); min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 10px; }
+
+    /* Outer Wrapper Controls */
+    .top-controls {
+      width: 100%; max-width: 440px; display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 10px; color: #94a3b8; font-size: 0.85rem;
+    }
+    .top-controls a { color: #38bdf8; text-decoration: none; font-weight: 600; display: flex; align-items: center; gap: 4px; }
+    .top-controls a:hover { text-decoration: underline; }
+
+    /* Phone Device Mockup Container */
+    .phone-container {
+      width: 100%; max-width: 420px; height: 860px; max-height: 94vh;
+      background: var(--app-bg); border-radius: 40px; overflow: hidden;
+      box-shadow: 0 25px 60px rgba(0,0,0,0.6), 0 0 0 10px #1e293b, 0 0 0 12px #334155;
+      display: flex; flex-direction: column; position: relative;
+    }
+
+    /* Phone Bezel Notch / Speaker */
+    .phone-notch {
+      width: 140px; height: 22px; background: #1e293b; border-bottom-left-radius: 14px;
+      border-bottom-right-radius: 14px; margin: 0 auto; display: flex; align-items: center;
+      justify-content: center; z-index: 100; position: relative;
+    }
+    .speaker { width: 45px; height: 4px; background: #475569; border-radius: 2px; }
+    .camera { width: 8px; height: 8px; background: #0f172a; border-radius: 50%; margin-left: 10px; border: 1px solid #334155; }
+
+    /* Mobile Header & Multi-Child Switcher */
+    .app-header {
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      color: white; padding: 14px 18px 16px 18px; position: relative; z-index: 50;
+    }
+    .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+    .school-pill { font-size: 0.72rem; background: rgba(255,255,255,0.2); padding: 3px 8px; border-radius: 12px; font-weight: 600; }
+    
+    .lang-select {
+      background: rgba(0,0,0,0.25); border: 1px solid rgba(255,255,255,0.3); color: white;
+      font-size: 0.72rem; border-radius: 6px; padding: 2px 6px; cursor: pointer;
+    }
+
+    /* Multi-Profile Guardian Switcher */
+    .guardian-bar {
+      background: rgba(255,255,255,0.12); border-radius: 12px; padding: 10px 12px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .guardian-info { font-size: 0.8rem; }
+    .guardian-info div { font-weight: 700; font-size: 0.95rem; }
+    .child-chips { display: flex; gap: 6px; }
+    .child-chip {
+      background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.4);
+      color: white; padding: 4px 10px; border-radius: 20px; font-size: 0.75rem;
+      cursor: pointer; font-weight: 600; transition: all 0.2s;
+    }
+    .child-chip.active {
+      background: white; color: var(--primary); font-weight: 800;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    }
+
+    /* Screen Content Area */
+    .screen-body { flex: 1; overflow-y: auto; padding: 16px; position: relative; }
+
+    /* Quick Hero Card */
+    .hero-card {
+      background: white; border-radius: 16px; padding: 16px; margin-bottom: 16px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.04); display: flex; align-items: center; gap: 16px;
+    }
+    .avatar-wrap {
+      width: 60px; height: 60px; border-radius: 50%; background: #e0e7ff;
+      display: flex; align-items: center; justify-content: center; font-size: 1.6rem;
+      border: 3px solid #c7d2fe; flex-shrink: 0;
+    }
+    .student-details h2 { font-size: 1.15rem; color: #1e293b; font-weight: 700; }
+    .student-details p { font-size: 0.8rem; color: var(--text-muted); margin-top: 2px; }
+
+    /* Stats Pill Row */
+    .stats-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
+    .stat-pill {
+      background: white; border-radius: 12px; padding: 12px; text-align: center;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.03); border: 1px solid var(--border);
+    }
+    .stat-pill .num { font-size: 1.3rem; font-weight: 800; color: var(--primary); }
+    .stat-pill .lbl { font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600; }
+
+    /* Module Section Titles */
+    .section-title {
+      font-size: 0.95rem; font-weight: 700; color: #1e293b; margin-bottom: 10px;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .section-title a { font-size: 0.78rem; color: var(--primary); text-decoration: none; font-weight: 600; }
+
+    /* Academic Hub Subjects */
+    .subj-card {
+      background: white; border-radius: 12px; padding: 12px 14px; margin-bottom: 10px;
+      border: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center;
+      cursor: pointer; transition: transform 0.15s;
+    }
+    .subj-card:hover { transform: translateY(-1px); border-color: var(--primary); }
+    .subj-info h4 { font-size: 0.92rem; color: #1e293b; }
+    .subj-info p { font-size: 0.76rem; color: var(--text-muted); margin-top: 2px; }
+
+    /* Homework Cards */
+    .hw-card {
+      background: white; border-radius: 14px; padding: 14px; margin-bottom: 12px;
+      border: 1px solid var(--border); box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+    }
+    .hw-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+    .hw-badge { font-size: 0.7rem; font-weight: 700; padding: 2px 8px; border-radius: 10px; }
+    .hw-due { background: #fef3c7; color: #b45309; }
+    .hw-graded { background: #dcfce7; color: #15803d; }
+    .hw-title { font-weight: 700; font-size: 0.92rem; color: #1e293b; }
+    .hw-desc { font-size: 0.8rem; color: #475569; margin: 6px 0; }
+    .hw-foot { display: flex; justify-content: space-between; align-items: center; margin-top: 8px; font-size: 0.75rem; color: var(--text-muted); }
+
+    /* ID Card Preview */
+    .id-card {
+      background: linear-gradient(135deg, #1e3a8a, #3b82f6); color: white;
+      border-radius: 16px; padding: 16px; margin-bottom: 16px; position: relative;
+      box-shadow: 0 6px 20px rgba(30, 58, 138, 0.3);
+    }
+    .id-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 8px; margin-bottom: 12px; }
+    .id-body { display: flex; gap: 14px; align-items: center; }
+    .id-photo { width: 64px; height: 64px; border-radius: 8px; background: white; color: #1e3a8a; display: flex; align-items: center; justify-content: center; font-size: 2rem; font-weight: bold; border: 2px solid white; }
+    .id-fields { font-size: 0.78rem; line-height: 1.5; }
+    .id-barcode { text-align: center; margin-top: 10px; font-family: monospace; font-size: 0.8rem; letter-spacing: 4px; background: rgba(0,0,0,0.2); padding: 4px; border-radius: 4px; }
+
+    /* Bus Tracker */
+    .bus-tracker {
+      background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 14px; padding: 14px; margin-bottom: 16px;
+    }
+    .bus-header { display: flex; justify-content: space-between; align-items: center; font-weight: 700; font-size: 0.88rem; color: #1e40af; margin-bottom: 8px; }
+    .bus-status { font-size: 0.78rem; color: #2563eb; display: flex; align-items: center; gap: 6px; }
+
+    /* Bottom App Bar */
+    .bottom-nav {
+      background: white; border-top: 1px solid var(--border); display: flex;
+      justify-content: space-around; padding: 8px 0; z-index: 50;
+    }
+    .nav-btn {
+      background: transparent; border: none; display: flex; flex-direction: column;
+      align-items: center; gap: 3px; font-size: 0.7rem; font-weight: 600; color: var(--text-muted);
+      cursor: pointer; width: 64px; transition: color 0.15s;
+    }
+    .nav-btn span { font-size: 1.25rem; }
+    .nav-btn.active { color: var(--primary); }
+
+    /* Modal Sheet */
+    .modal-sheet {
+      position: absolute; inset: 0; background: rgba(0,0,0,0.6); display: none;
+      align-items: flex-end; z-index: 200; backdrop-filter: blur(2px);
+    }
+    .sheet-card {
+      background: white; width: 100%; border-top-left-radius: 20px; border-top-right-radius: 20px;
+      padding: 20px; max-height: 80%; overflow-y: auto;
+    }
+    .sheet-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+    .btn-submit {
+      width: 100%; background: var(--primary); color: white; border: none; padding: 12px;
+      border-radius: 10px; font-weight: 700; font-size: 0.9rem; cursor: pointer; margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Outside Browser Navigation Links -->
+  <div class="top-controls">
+    <div style="display: flex; gap: 12px;">
+      <a href="index.html">← Back to SaaS Suite</a>
+      <a href="signin.html">🔑 Sign In / Switch</a>
+    </div>
+    <span>Mobile Client: Flutter (Dart Engine)</span>
+  </div>
+
+  <!-- Mobile Frame -->
+  <div class="phone-container">
+    <div class="phone-notch">
+      <div class="speaker"></div>
+      <div class="camera"></div>
+    </div>
+
+    <!-- App Header & Multi-Child Guardian Switcher -->
+    <div class="app-header">
+      <div class="header-top">
+        <span class="school-pill" id="appSchoolLabel">St. Xavier's International</span>
+        <select id="langSelect" class="lang-select" onchange="changeLanguage()">
+          <option value="en">English (EN)</option>
+          <option value="hi">हिंदी (HI)</option>
+          <option value="ur">اردو (UR)</option>
+        </select>
+      </div>
+
+      <!-- Multi-Profile Guardian Switcher -->
+      <div class="guardian-bar">
+        <div class="guardian-info">
+          <span style="font-size: 0.7rem; opacity: 0.85;" id="lblGuardian">Guardian Account:</span>
+          <div>Rajesh Sharma</div>
+        </div>
+        <div class="child-chips">
+          <button class="child-chip active" id="chip-aarav" onclick="selectChild(1, 'Aarav')">Aarav (Gr 10)</button>
+          <button class="child-chip" id="chip-ananya" onclick="selectChild(2, 'Ananya')">Ananya (Gr 6)</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Screen Content Body -->
+    <div class="screen-body">
+
+      <!-- View 1: Home Dashboard -->
+      <div id="view-home">
+        <!-- Student Hero Card -->
+        <div class="hero-card">
+          <div class="avatar-wrap" id="stAvatar">👨‍🎓</div>
+          <div class="student-details">
+            <h2 id="stNameDisplay">Aarav Sharma</h2>
+            <p id="stMetaDisplay">Grade 10 - Section A • Roll #101</p>
+            <p style="font-size: 0.75rem; color: #0284c7; margin-top: 4px;" id="stAdmDisplay">Adm ID: ADM-2024-001</p>
+          </div>
+        </div>
+
+        <!-- Quick Stats -->
+        <div class="stats-row">
+          <div class="stat-pill">
+            <div class="num" id="statAtt">95.0%</div>
+            <div class="lbl" id="lblAtt">Attendance</div>
+          </div>
+          <div class="stat-pill">
+            <div class="num" id="statGPA">3.92</div>
+            <div class="lbl" id="lblGPA">Term GPA</div>
+          </div>
+        </div>
+
+        <!-- Online Fee Payment Card (UPI joy.john@ybl) -->
+        <div class="fee-card" style="background: linear-gradient(135deg, #059669, #0284c7); color: white; border-radius: 14px; padding: 16px; margin-bottom: 16px; box-shadow: 0 4px 15px rgba(5, 150, 105, 0.25);">
+          <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+            <div>
+              <div style="font-size:0.75rem; text-transform:uppercase; letter-spacing:0.8px; opacity:0.9; font-weight:700;">Term Tuition Fee</div>
+              <div style="font-size:1.35rem; font-weight:800; margin-top:2px;" id="feeAmountDisplay">₹1,250 <span id="feeStatusBadge" style="font-size:0.72rem; font-weight:700; background:rgba(255,255,255,0.25); padding:2px 6px; border-radius:4px;">Due</span></div>
+            </div>
+            <span style="background:rgba(255,255,255,0.25); font-size:0.72rem; padding:3px 8px; border-radius:6px; font-weight:700;">Official UPI Gateway</span>
+          </div>
+          <div style="font-size:0.75rem; margin-top:6px; opacity:0.95;">Direct UPI VPA: <strong>joy.john@ybl</strong></div>
+          <button id="btnPayFees" onclick="payStudentFeesUPI()" style="width:100%; margin-top:12px; background:white; color:#047857; border:none; padding:10px; border-radius:8px; font-weight:800; font-size:0.88rem; cursor:pointer; box-shadow:0 2px 8px rgba(0,0,0,0.1);">
+            📱 Pay Fees via UPI (QR & Apps) ➔
+          </button>
+        </div>
+
+        <!-- Bus Tracking Quick View -->
+        <div class="bus-tracker">
+          <div class="bus-header">
+            <span>🚌 Route 4 - School Bus</span>
+            <span style="font-size: 0.72rem; background: #dbeafe; padding: 2px 6px; border-radius: 4px;">BUS-04</span>
+          </div>
+          <div class="bus-status">
+            <span>● Live GPS: Approaching Elm St Stop (3 mins away)</span>
+          </div>
+        </div>
+
+        <!-- Latest Announcement -->
+        <div class="section-title">
+          <span id="lblNoticeTitle">Notice Board</span>
+          <a href="#" onclick="switchNav('notices')">View All</a>
+        </div>
+        <div id="latest-notice-card" style="background: white; border-radius: 12px; padding: 12px; border: 1px solid var(--border); margin-bottom: 16px;">
+          <strong style="font-size: 0.88rem; color: #1e293b;">Annual STEM Science Expo & Robotics Showcase</strong>
+          <p style="font-size: 0.78rem; color: #64748b; margin-top: 4px;">Registered projects must be submitted to the academic office by Friday.</p>
+        </div>
+
+        <!-- Pending Assignments Preview -->
+        <div class="section-title">
+          <span id="lblHomeworkTitle">Pending Assignments</span>
+          <a href="#" onclick="switchNav('academic')">View All</a>
+        </div>
+        <div id="home-hw-list">
+          <!-- Dynamically populated -->
+        </div>
+      </div>
+
+      <!-- View 2: Academic Hub & Chapters -->
+      <div id="view-academic" style="display:none;">
+        <div class="section-title">
+          <span>📚 Subject Syllabus & Chapters</span>
+          <a href="#" onclick="openIDCardModal()">View ID Card 🪪</a>
+        </div>
+        <div id="academic-subjects-list">
+          <!-- Dynamically populated -->
+        </div>
+
+        <!-- Digital ID Card Section -->
+        <div style="margin-top: 20px;">
+          <div class="section-title"><span>🪪 Student Identification</span></div>
+          <div class="id-card" id="digitalIdCard">
+            <div class="id-header">
+              <strong id="idSchoolName">ST. XAVIER'S INTERNATIONAL</strong>
+              <span style="font-size: 0.7rem; background: rgba(255,255,255,0.25); padding: 2px 6px; border-radius: 4px;">VALID 2026-27</span>
+            </div>
+            <div class="id-body">
+              <div class="id-photo" id="idPhotoChar">A</div>
+              <div class="id-fields">
+                <div><strong>NAME:</strong> <span id="idStudentName">Aarav Sharma</span></div>
+                <div><strong>CLASS:</strong> <span id="idStudentClass">Grade 10-A</span></div>
+                <div><strong>ROLL NO:</strong> <span id="idStudentRoll">101</span></div>
+                <div><strong>BLOOD GRP:</strong> <span id="idStudentBlood">B+</span></div>
+                <div><strong>EMERGENCY:</strong> +1 (555) 777-8899</div>
+              </div>
+            </div>
+            <div class="id-barcode">||| | || |||| | | ||| ||||</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- View 3: Homework Submissions -->
+      <div id="view-homework" style="display:none;">
+        <div class="section-title">
+          <span>📝 Assignments & Homework</span>
+        </div>
+        <div id="full-hw-list">
+          <!-- Dynamically populated -->
+        </div>
+      </div>
+
+      <!-- View 4: Notice Board & Gallery -->
+      <div id="view-notices" style="display:none;">
+        <div class="section-title">
+          <span>📢 School Announcements</span>
+        </div>
+        <div id="full-notices-list">
+          <!-- Dynamically populated -->
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Bottom Navigation Bar -->
+    <div class="bottom-nav">
+      <button class="nav-btn active" onclick="switchNav('home')">
+        <span>🏠</span>
+        <div id="navHome">Home</div>
+      </button>
+      <button class="nav-btn" onclick="switchNav('academic')">
+        <span>📚</span>
+        <div id="navHub">Academic</div>
+      </button>
+      <button class="nav-btn" onclick="switchNav('homework')">
+        <span>📝</span>
+        <div id="navTasks">Tasks</div>
+      </button>
+      <button class="nav-btn" onclick="switchNav('notices')">
+        <span>📢</span>
+        <div id="navAlerts">Notices</div>
+      </button>
+    </div>
+
+    <!-- Homework Submission Modal Sheet -->
+    <div id="submitModal" class="modal-sheet">
+      <div class="sheet-card">
+        <div class="sheet-header">
+          <strong id="modalHwTitle">Submit Assignment</strong>
+          <button style="border:none; background:none; font-size:1.4rem; cursor:pointer;" onclick="closeSubmitModal()">&times;</button>
+        </div>
+        <input type="hidden" id="modalHwId">
+        <div style="font-size: 0.8rem; color: #64748b; margin-bottom: 12px;">Type your response or attach homework notes.</div>
+        <textarea id="modalHwText" style="width:100%; border:1px solid #cbd5e1; border-radius:8px; padding:10px; font-size:0.85rem;" rows="4" placeholder="Enter your answers or assignment notes..."></textarea>
+        <div style="margin-top: 10px; font-size: 0.8rem; color: #475569;">
+          📎 Attachment: <input type="file" style="margin-top:4px; font-size:0.75rem;">
+        </div>
+        <button class="btn-submit" onclick="submitHomeworkToServer()">Confirm & Submit Online</button>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    const API_BASE = window.location.origin.includes('8088') ? window.location.origin : 'http://localhost:8088';
+    let currentStudentId = 1;
+    let currentSchoolId = 1;
+
+    // Check query params
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('student_id')) {
+      currentStudentId = parseInt(urlParams.get('student_id'));
+    }
+    if (urlParams.get('school_id')) {
+      currentSchoolId = parseInt(urlParams.get('school_id'));
+    }
+
+    // Translations for English, Hindi, Urdu
+    const translations = {
+      en: {
+        guardian: "Guardian Account:",
+        att: "Attendance",
+        gpa: "Term GPA",
+        noticeTitle: "Notice Board",
+        hwTitle: "Pending Assignments",
+        navHome: "Home",
+        navHub: "Academic",
+        navTasks: "Tasks",
+        navAlerts: "Notices"
+      },
+      hi: {
+        guardian: "अभिभावक खाता:",
+        att: "उपस्थिति",
+        gpa: "सत्र जीपीए",
+        noticeTitle: "सूचना पट्ट",
+        hwTitle: "गृहकार्य कार्य",
+        navHome: "होम",
+        navHub: "अकादमिक",
+        navTasks: "कार्य",
+        navAlerts: "सूचनाएं"
+      },
+      ur: {
+        guardian: "سرپرست اکاؤنٹ:",
+        att: "حاضری",
+        gpa: "ٹرم جی پی اے",
+        noticeTitle: "نوٹس بورڈ",
+        hwTitle: "ہوم ورک اسائنمنٹس",
+        navHome: "ہوم",
+        navHub: "تعلیمی مرکز",
+        navTasks: "اسائنمنٹس",
+        navAlerts: "اطلاعات"
+      }
+    };
+
+    function changeLanguage() {
+      const lang = document.getElementById('langSelect').value;
+      const t = translations[lang] || translations.en;
+      document.getElementById('lblGuardian').innerText = t.guardian;
+      document.getElementById('lblAtt').innerText = t.att;
+      document.getElementById('lblGPA').innerText = t.gpa;
+      document.getElementById('lblNoticeTitle').innerText = t.noticeTitle;
+      document.getElementById('lblHomeworkTitle').innerText = t.hwTitle;
+      document.getElementById('navHome').innerText = t.navHome;
+      document.getElementById('navHub').innerText = t.navHub;
+      document.getElementById('navTasks').innerText = t.navTasks;
+      document.getElementById('navAlerts').innerText = t.navAlerts;
+    }
+
+    function switchNav(viewName) {
+      document.getElementById('view-home').style.display = 'none';
+      document.getElementById('view-academic').style.display = 'none';
+      document.getElementById('view-homework').style.display = 'none';
+      document.getElementById('view-notices').style.display = 'none';
+
+      document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+
+      if (viewName === 'home') {
+        document.getElementById('view-home').style.display = 'block';
+        document.querySelectorAll('.nav-btn')[0].classList.add('active');
+      } else if (viewName === 'academic') {
+        document.getElementById('view-academic').style.display = 'block';
+        document.querySelectorAll('.nav-btn')[1].classList.add('active');
+      } else if (viewName === 'homework') {
+        document.getElementById('view-homework').style.display = 'block';
+        document.querySelectorAll('.nav-btn')[2].classList.add('active');
+      } else if (viewName === 'notices') {
+        document.getElementById('view-notices').style.display = 'block';
+        document.querySelectorAll('.nav-btn')[3].classList.add('active');
+      }
+    }
+
+    // Multi-Profile Guardian Switcher Action
+    function selectChild(stId, name) {
+      currentStudentId = stId;
+      loadStudentProfile();
+      loadAcademicHub();
+      loadHomework();
+    }
+
+    async function loadStudentProfile() {
+      try {
+        const res = await fetch(`${API_BASE}/api/student_profile?student_id=${currentStudentId}&school_id=${currentSchoolId}`);
+        const s = await res.json();
+
+        if (s.school_id) currentSchoolId = s.school_id;
+        if (s.school_name) {
+          document.getElementById('appSchoolLabel').innerText = s.school_name;
+          document.getElementById('idSchoolName').innerText = s.school_name.toUpperCase();
+        }
+
+        const guardianDiv = document.querySelector('.guardian-info div');
+        if (guardianDiv) guardianDiv.innerText = s.parent_name || `${s.name}'s Family`;
+
+        // Render Multi-Child Switcher chips dynamically
+        const chipsContainer = document.querySelector('.child-chips');
+        if (chipsContainer && s.siblings && s.siblings.length > 0) {
+          chipsContainer.innerHTML = '';
+          s.siblings.forEach(sib => {
+            const btn = document.createElement('button');
+            btn.className = `child-chip ${sib.id === currentStudentId ? 'active' : ''}`;
+            const shortClass = sib.class_name ? sib.class_name.replace('Grade ', 'Gr ') : 'Student';
+            btn.innerText = `${sib.name.split(' ')[0]} (${shortClass})`;
+            btn.onclick = () => selectChild(sib.id, sib.name);
+            chipsContainer.appendChild(btn);
+          });
+        }
+
+        document.getElementById('stNameDisplay').innerText = s.name;
+        document.getElementById('stMetaDisplay').innerText = `${s.class_name} - Section ${s.section} • Roll #${s.roll_no}`;
+        document.getElementById('stAdmDisplay').innerText = `Adm ID: ${s.admission_no}`;
+        document.getElementById('statAtt').innerText = `${s.attendance_percentage}%`;
+        document.getElementById('stAvatar').innerText = s.gender === 'Female' ? '👩‍🎓' : '👨‍🎓';
+
+        // Update ID Card
+        document.getElementById('idStudentName').innerText = s.name;
+        document.getElementById('idStudentClass').innerText = `${s.class_name}-${s.section}`;
+        document.getElementById('idStudentRoll').innerText = s.roll_no;
+        document.getElementById('idStudentBlood').innerText = s.blood_group || 'B+';
+        document.getElementById('idPhotoChar').innerText = s.name.charAt(0);
+      } catch (e) {
+        console.error("Error loading profile", e);
+      }
+    }
+
+    async function loadAcademicHub() {
+      try {
+        const res = await fetch(`${API_BASE}/api/academic_hub?student_id=${currentStudentId}&school_id=${currentSchoolId}`);
+        const subjects = await res.json();
+        const container = document.getElementById('academic-subjects-list');
+        container.innerHTML = '';
+
+        subjects.forEach(sub => {
+          const div = document.createElement('div');
+          div.className = 'subj-card';
+          const chCount = sub.chapters ? sub.chapters.length : 0;
+          div.innerHTML = `
+            <div class="subj-info">
+              <h4>${sub.name}</h4>
+              <p>👨‍🏫 ${sub.teacher_name || 'Faculty'} • ${chCount} Chapters Syllabus</p>
+            </div>
+            <span style="font-size: 0.8rem; color: var(--primary); font-weight: 700;">Open →</span>
+          `;
+          container.appendChild(div);
+        });
+      } catch (e) {
+        console.error("Error loading academic hub", e);
+      }
+    }
+
+    async function loadHomework() {
+      try {
+        const res = await fetch(`${API_BASE}/api/homework?school_id=${currentSchoolId}`);
+        const hwList = await res.json();
+
+        const homeContainer = document.getElementById('home-hw-list');
+        const fullContainer = document.getElementById('full-hw-list');
+        homeContainer.innerHTML = '';
+        fullContainer.innerHTML = '';
+
+        hwList.forEach((hw, idx) => {
+          const card = document.createElement('div');
+          card.className = 'hw-card';
+          card.innerHTML = `
+            <div class="hw-top">
+              <span class="hw-badge hw-due">Due: ${hw.due_date}</span>
+              <span style="font-weight:700; color:var(--primary); font-size:0.78rem;">${hw.points} pts</span>
+            </div>
+            <div class="hw-title">${hw.title}</div>
+            <div class="hw-desc">${hw.description}</div>
+            <div class="hw-foot">
+              <span>👨‍🏫 ${hw.teacher_name}</span>
+              <button onclick="openSubmitModal(${hw.id}, '${hw.title.replace(/'/g, "\\'")}')" style="background:var(--primary); color:white; border:none; padding:4px 10px; border-radius:6px; font-size:0.75rem; cursor:pointer;">
+                Submit 📤
+              </button>
+            </div>
+          `;
+
+          if (idx < 2) {
+            homeContainer.appendChild(card.cloneNode(true));
+          }
+          fullContainer.appendChild(card);
+        });
+      } catch (e) {
+        console.error("Error loading homework", e);
+      }
+    }
+
+    async function loadNotices() {
+      try {
+        const res = await fetch(`${API_BASE}/api/notices?school_id=${currentSchoolId}`);
+        const notices = await res.json();
+        const container = document.getElementById('full-notices-list');
+        container.innerHTML = '';
+
+        notices.forEach(n => {
+          const div = document.createElement('div');
+          div.style.background = 'white';
+          div.style.border = '1px solid var(--border)';
+          div.style.borderRadius = '12px';
+          div.style.padding = '12px';
+          div.style.marginBottom = '10px';
+          div.innerHTML = `
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+              <strong style="font-size:0.88rem; color:#1e293b;">${n.title}</strong>
+              <span style="font-size:0.7rem; background:#fee2e2; color:#b91c1c; padding:2px 6px; border-radius:4px;">${n.priority}</span>
+            </div>
+            <p style="font-size:0.78rem; color:#475569;">${n.content}</p>
+            <div style="font-size:0.72rem; color:var(--text-muted); margin-top:6px;">${n.date} • ${n.author}</div>
+          `;
+          container.appendChild(div);
+        });
+      } catch (e) {
+        console.error("Error loading notices", e);
+      }
+    }
+
+    function openSubmitModal(id, title) {
+      document.getElementById('modalHwId').value = id;
+      document.getElementById('modalHwTitle').innerText = `Submit: ${title}`;
+      document.getElementById('submitModal').style.display = 'flex';
+    }
+    function closeSubmitModal() {
+      document.getElementById('submitModal').style.display = 'none';
+    }
+
+    async function submitHomeworkToServer() {
+      const hwId = document.getElementById('modalHwId').value;
+      const text = document.getElementById('modalHwText').value;
+
+      try {
+        const res = await fetch(`${API_BASE}/api/homework/submit`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            assignment_id: parseInt(hwId),
+            student_id: currentStudentId,
+            submission_text: text || "Online homework submitted from mobile app."
+          })
+        });
+        const d = await res.json();
+        closeSubmitModal();
+        alert(d.message || "Submitted successfully!");
+      } catch (e) {
+        alert("Failed to submit homework.");
+      }
+    }
+
+    function openIDCardModal() {
+      switchNav('academic');
+      document.getElementById('digitalIdCard').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function payStudentFeesUPI() {
+      const studentName = document.getElementById('stNameDisplay').innerText || 'Student';
+      const admNo = document.getElementById('stAdmDisplay').innerText || 'ADM';
+
+      if (!window.SchoolSync) {
+        alert("Payment gateway loading, please wait...");
+        return;
+      }
+
+      window.SchoolSync.openPaymentModal({
+        amount: 1250,
+        purpose: `School Term Fee: ${studentName} (${admNo})`,
+        schoolId: currentSchoolId,
+        schoolCode: 'SXIA',
+        studentId: currentStudentId,
+        payerName: studentName,
+        onComplete: (payment) => {
+          document.getElementById('feeStatusBadge').innerText = 'PAID ✓';
+          document.getElementById('feeStatusBadge').style.background = '#dcfce7';
+          document.getElementById('feeStatusBadge').style.color = '#15803d';
+          const btn = document.getElementById('btnPayFees');
+          btn.innerText = '✓ Fee Paid - View Electronic Receipt';
+          btn.style.background = '#dcfce7';
+          btn.style.color = '#15803d';
+          btn.onclick = () => window.SchoolSync.showReceiptDialog(payment);
+        }
+      });
+    }
+
+    window.onload = function() {
+      loadStudentProfile();
+      loadAcademicHub();
+      loadHomework();
+      loadNotices();
+    };
+  </script>
+</body>
+</html>

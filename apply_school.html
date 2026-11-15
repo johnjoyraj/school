@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EduSaaS - Apply for New School Registration</title>
+  <script src="school-sync.js"></script>
+  <style>
+    :root {
+      --primary: #1e3a8a;
+      --primary-hover: #1e40af;
+      --secondary: #0284c7;
+      --accent: #10b981;
+      --warning: #f59e0b;
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --border: #e2e8f0;
+      --text: #0f172a;
+      --text-muted: #64748b;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; }
+    body { background: var(--bg); color: var(--text); min-height: 100vh; display: flex; flex-direction: column; }
+
+    /* Header */
+    header {
+      background: linear-gradient(135deg, #1e3a8a, #0f172a);
+      color: white;
+      padding: 30px 20px 25px;
+      text-align: center;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+    header h1 { font-size: 2rem; margin-bottom: 6px; }
+    header p { color: #94a3b8; font-size: 1rem; max-width: 650px; margin: 0 auto; }
+    .header-links { margin-top: 14px; display: flex; justify-content: center; gap: 12px; }
+    .header-link {
+      color: #38bdf8; text-decoration: none; font-size: 0.88rem; font-weight: 600;
+      background: rgba(255,255,255,0.1); padding: 5px 12px; border-radius: 6px;
+    }
+    .header-link:hover { background: rgba(255,255,255,0.2); }
+
+    .container { max-width: 1000px; width: 100%; margin: 30px auto; padding: 0 20px; flex: 1; }
+
+    /* Steps & Form */
+    .form-card {
+      background: white; border-radius: 16px; border: 1px solid var(--border);
+      padding: 35px; box-shadow: 0 4px 20px rgba(0,0,0,0.04); margin-bottom: 30px;
+    }
+    .section-title {
+      font-size: 1.25rem; font-weight: 700; color: #1e293b; margin-bottom: 16px;
+      display: flex; align-items: center; gap: 8px; border-bottom: 2px solid #f1f5f9; padding-bottom: 8px;
+    }
+
+    /* Subscription Tier Selection */
+    .plans-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; margin-bottom: 24px; }
+    .plan-box {
+      border: 2px solid var(--border); border-radius: 12px; padding: 16px; text-align: center;
+      cursor: pointer; transition: all 0.2s; background: #f8fafc; position: relative;
+    }
+    .plan-box:hover { border-color: var(--secondary); background: white; transform: translateY(-2px); }
+    .plan-box.selected {
+      border-color: var(--primary); background: #eff6ff; box-shadow: 0 4px 12px rgba(30, 58, 138, 0.12);
+    }
+    .plan-box input[type="radio"] { display: none; }
+    .plan-limit { font-size: 1.15rem; font-weight: 800; color: #1e3a8a; }
+    .plan-sub { font-size: 0.76rem; color: var(--text-muted); margin-top: 2px; }
+    .plan-price { font-size: 1.25rem; font-weight: 800; color: #0284c7; margin: 8px 0; }
+    .plan-price span { font-size: 0.75rem; color: var(--text-muted); font-weight: normal; }
+    .plan-tag {
+      font-size: 0.68rem; font-weight: 700; background: #e0f2fe; color: #0369a1;
+      padding: 2px 6px; border-radius: 4px; display: inline-block;
+    }
+
+    /* Form Fields */
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-bottom: 20px; }
+    .form-group { margin-bottom: 14px; }
+    .form-group.full { grid-column: 1 / -1; }
+    .form-group label { display: block; font-size: 0.84rem; font-weight: 600; color: #475569; margin-bottom: 6px; }
+    .form-control {
+      width: 100%; border: 1px solid var(--border); padding: 10px 14px; border-radius: 8px;
+      font-size: 0.9rem; background: #f8fafc;
+    }
+    .form-control:focus { outline: none; border-color: var(--secondary); background: white; }
+
+    .btn-apply {
+      width: 100%; background: linear-gradient(135deg, #1e3a8a, #0284c7); color: white;
+      border: none; padding: 14px; border-radius: 10px; font-weight: 700; font-size: 1.05rem;
+      cursor: pointer; transition: opacity 0.2s; box-shadow: 0 4px 12px rgba(30, 58, 138, 0.25);
+    }
+    .btn-apply:hover { opacity: 0.95; }
+
+    /* Success Card */
+    #successBox {
+      display: none; background: #ecfdf5; border: 2px solid #10b981; border-radius: 16px;
+      padding: 30px; text-align: center; margin-bottom: 30px;
+    }
+    #successBox h2 { color: #065f46; font-size: 1.5rem; margin-bottom: 10px; }
+    .cred-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px;
+      background: white; border: 1px solid #a7f3d0; border-radius: 12px; padding: 20px; margin: 20px 0; text-align: left;
+    }
+    .cred-item { font-size: 0.85rem; }
+    .cred-item span { color: var(--text-muted); display: block; font-size: 0.75rem; text-transform: uppercase; font-weight: 700; }
+    .cred-item strong { font-size: 1.1rem; color: #1e3a8a; }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>🎓 Apply for New School Onboarding</h1>
+    <p>Select your student body capacity, choose your school code, and activate your multi-tenant portal instantly.</p>
+    <div class="header-links">
+      <a href="signin.html" class="header-link">🔑 Already Registered? Sign In</a>
+      <a href="index.html" class="header-link">🏠 Main Portal</a>
+    </div>
+  </header>
+
+  <div class="container">
+
+    <!-- Success View -->
+    <div id="successBox">
+      <h2>🎉 Congratulations! Your School is Registered</h2>
+      <p style="color: #047857; font-size: 0.95rem;">Your tenant environment, default Grade 10-A classroom, and administrative login credentials are now live!</p>
+
+      <div class="cred-grid">
+        <div class="cred-item">
+          <span>School Code (For Login)</span>
+          <strong id="resSchoolCode">---</strong>
+        </div>
+        <div class="cred-item">
+          <span>School Password</span>
+          <strong id="resSchoolPwd">---</strong>
+        </div>
+        <div class="cred-item">
+          <span>Principal Login ID</span>
+          <strong id="resPrincipalId">---</strong>
+        </div>
+        <div class="cred-item">
+          <span>Principal Password</span>
+          <strong id="resPrincipalPwd">---</strong>
+        </div>
+      </div>
+
+      <a id="btnGoToSchool" href="signin.html" class="btn-apply" style="display:inline-block; max-width:320px; text-decoration:none;">
+        🚀 Proceed to School Sign In
+      </a>
+    </div>
+
+    <!-- Application Form -->
+    <div class="form-card" id="applyCard">
+      <form id="applyForm" onsubmit="submitSchoolApplication(event)">
+
+        <!-- Step 1: Select Student Capacity Plan -->
+        <div class="section-title">
+          <span>1️⃣ Select Subscription Plan by Student Capacity</span>
+        </div>
+        <div class="plans-row">
+          <label class="plan-box" onclick="selectPlan('plan_200')">
+            <input type="radio" name="plan" value="plan_200">
+            <div class="plan-limit">200</div>
+            <div class="plan-sub">Children Limit</div>
+            <div class="plan-price">$49 <span>/mo</span></div>
+            <span class="plan-tag">Micro Academy</span>
+          </label>
+
+          <label class="plan-box" onclick="selectPlan('plan_600')">
+            <input type="radio" name="plan" value="plan_600">
+            <div class="plan-limit">600</div>
+            <div class="plan-sub">Children Limit</div>
+            <div class="plan-price">$129 <span>/mo</span></div>
+            <span class="plan-tag">Standard School</span>
+          </label>
+
+          <label class="plan-box selected" onclick="selectPlan('plan_1000')">
+            <input type="radio" name="plan" value="plan_1000" checked>
+            <div class="plan-limit">1,000</div>
+            <div class="plan-sub">Children Limit</div>
+            <div class="plan-price">$249 <span>/mo</span></div>
+            <span class="plan-tag">Premier Campus</span>
+          </label>
+
+          <label class="plan-box" onclick="selectPlan('plan_2000')">
+            <input type="radio" name="plan" value="plan_2000">
+            <div class="plan-limit">2,000</div>
+            <div class="plan-sub">Children Limit</div>
+            <div class="plan-price">$449 <span>/mo</span></div>
+            <span class="plan-tag">Advanced Inst.</span>
+          </label>
+
+          <label class="plan-box" onclick="selectPlan('plan_5000')">
+            <input type="radio" name="plan" value="plan_5000">
+            <div class="plan-limit">5,000</div>
+            <div class="plan-sub">Children Limit</div>
+            <div class="plan-price">$899 <span>/mo</span></div>
+            <span class="plan-tag">Enterprise Group</span>
+          </label>
+        </div>
+
+        <!-- Step 2: School Institution Details -->
+        <div class="section-title" style="margin-top: 24px;">
+          <span>2️⃣ School Institution Details</span>
+        </div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label>School / Institution Name *</label>
+            <input type="text" id="schoolName" class="form-control" required placeholder="e.g. Greenwood International School">
+          </div>
+          <div class="form-group">
+            <label>School Code (Unique 3-6 Chars) *</label>
+            <input type="text" id="schoolCode" class="form-control" required placeholder="e.g. GWIS" style="text-transform: uppercase;">
+          </div>
+          <div class="form-group">
+            <label>School Sign-In Password (For Staff/Students) *</label>
+            <input type="text" id="schoolPassword" class="form-control" required value="school123">
+          </div>
+          <div class="form-group">
+            <label>Campus Phone Number</label>
+            <input type="text" id="schoolPhone" class="form-control" placeholder="+1 (555) 789-0123">
+          </div>
+          <div class="form-group full">
+            <label>Campus Street Address</label>
+            <input type="text" id="schoolAddress" class="form-control" placeholder="456 Academic Boulevard, Education District">
+          </div>
+        </div>
+
+        <!-- Step 3: Principal & Admin Account -->
+        <div class="section-title" style="margin-top: 24px;">
+          <span>3️⃣ Principal & Administration Account Setup</span>
+        </div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Principal Full Name *</label>
+            <input type="text" id="adminName" class="form-control" required placeholder="e.g. Dr. Arthur Pendelton">
+          </div>
+          <div class="form-group">
+            <label>Principal Official Email *</label>
+            <input type="email" id="adminEmail" class="form-control" required placeholder="principal@gwis.edu">
+          </div>
+          <div class="form-group">
+            <label>Principal Login ID (Used to sign in) *</label>
+            <input type="text" id="adminLoginId" class="form-control" required placeholder="e.g. PRIN-GWIS-01">
+          </div>
+          <div class="form-group">
+            <label>Principal Login Password *</label>
+            <input type="password" id="adminPassword" class="form-control" required value="admin123">
+          </div>
+        </div>
+
+        <!-- Step 4: Online Subscription Activation & UPI Payment Gateway -->
+        <div class="section-title" style="margin-top: 24px;">
+          <span>4️⃣ Instant Subscription Activation & Online UPI Gateway</span>
+        </div>
+        <div style="background: #f0fdf4; border: 1px solid #86efac; border-radius: 12px; padding: 20px; margin-bottom: 24px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+            <div>
+              <div style="font-size: 0.82rem; text-transform: uppercase; font-weight: 700; color: #166534;">Official UPI Payment Gateway</div>
+              <div style="font-size: 1.15rem; font-weight: 800; color: #14532d; margin-top: 2px;">
+                Direct Bank Transfer to: <span style="font-family: monospace; background: white; padding: 2px 8px; border-radius: 6px; border: 1px solid #bbf7d0; color: #1e3a8a;">joy.john@ybl</span>
+              </div>
+              <div style="font-size: 0.82rem; color: #15803d; margin-top: 4px;">
+                Selected Plan Fee: <strong id="planFeeDisplay">₹19,999 / year</strong> (Premier Campus)
+              </div>
+            </div>
+            <div>
+              <button type="button" onclick="paySubscriptionWithUPI()" style="background: linear-gradient(135deg, #10b981, #059669); color: white; border: none; padding: 12px 20px; border-radius: 10px; font-weight: 700; font-size: 0.95rem; cursor: pointer; box-shadow: 0 4px 12px rgba(16,185,129,0.3); display: flex; align-items: center; gap: 8px;">
+                📱 Pay Now via UPI QR / App
+              </button>
+            </div>
+          </div>
+          <div id="upiPaymentNotice" style="margin-top: 12px; font-size: 0.8rem; color: #166534; display: none;">
+            ✅ UPI Payment Verified! Transaction UTR: <strong id="verifiedUtrLabel" style="font-family: monospace;"></strong>
+          </div>
+        </div>
+
+        <button type="submit" class="btn-apply" id="btnSubmit">
+          🚀 Submit Application & Provision School
+        </button>
+      </form>
+    </div>
+
+  </div>
+
+  <script>
+    const API_BASE = window.location.origin.includes('8088') ? window.location.origin : 'http://localhost:8088';
+    let selectedPlanId = 'plan_1000';
+    let verifiedPayment = null;
+
+    const PLAN_FEES = {
+      plan_200: { inr: 3999, label: '₹3,999 / year (Micro Academy - 200 Students)' },
+      plan_600: { inr: 9999, label: '₹9,999 / year (Standard School - 600 Students)' },
+      plan_1000: { inr: 19999, label: '₹19,999 / year (Premier Campus - 1,000 Students)' },
+      plan_2000: { inr: 34999, label: '₹34,999 / year (Advanced Institution - 2,000 Students)' },
+      plan_5000: { inr: 69999, label: '₹69,999 / year (Enterprise Multi-Campus - 5,000 Students)' }
+    };
+
+    function selectPlan(planId) {
+      selectedPlanId = planId;
+      document.querySelectorAll('.plan-box').forEach(b => b.classList.remove('selected'));
+      const chosen = document.querySelector(`.plan-box input[value="${planId}"]`).parentElement;
+      chosen.classList.add('selected');
+      chosen.querySelector('input').checked = true;
+
+      const feeInfo = PLAN_FEES[planId] || PLAN_FEES.plan_1000;
+      document.getElementById('planFeeDisplay').innerText = feeInfo.label;
+    }
+
+    // Auto update Principal Login ID when school code changes
+    document.getElementById('schoolCode').addEventListener('input', function(e) {
+      const code = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+      e.target.value = code;
+      if (code) {
+        document.getElementById('adminLoginId').value = `PRIN-${code}-01`;
+      }
+    });
+
+    function paySubscriptionWithUPI() {
+      const schoolName = document.getElementById('schoolName').value.trim() || 'New School';
+      const code = document.getElementById('schoolCode').value.trim().toUpperCase() || 'NEW';
+      const feeInfo = PLAN_FEES[selectedPlanId] || PLAN_FEES.plan_1000;
+
+      if (!window.SchoolSync) {
+        alert("Payment gateway loading, please wait...");
+        return;
+      }
+
+      window.SchoolSync.openPaymentModal({
+        amount: feeInfo.inr,
+        purpose: `EduSaaS Annual Plan: ${selectedPlanId} (${code})`,
+        schoolCode: code,
+        payerName: document.getElementById('adminName').value.trim() || 'School Principal',
+        onComplete: (payment) => {
+          verifiedPayment = payment;
+          document.getElementById('upiPaymentNotice').style.display = 'block';
+          document.getElementById('verifiedUtrLabel').innerText = payment.utr_no;
+          alert("UPI Payment successfully recorded! Click 'Submit Application & Provision School' to finalize setup.");
+        }
+      });
+    }
+
+    async function submitSchoolApplication(e) {
+      e.preventDefault();
+      const code = document.getElementById('schoolCode').value.trim().toUpperCase();
+      const schoolPwd = document.getElementById('schoolPassword').value;
+      const principalId = document.getElementById('adminLoginId').value.trim();
+      const principalPwd = document.getElementById('adminPassword').value;
+
+      const payload = {
+        name: document.getElementById('schoolName').value.trim(),
+        code: code,
+        password: schoolPwd,
+        plan_id: selectedPlanId,
+        admin_name: document.getElementById('adminName').value.trim(),
+        admin_email: document.getElementById('adminEmail').value.trim(),
+        admin_login_id: principalId,
+        admin_password: principalPwd,
+        phone: document.getElementById('schoolPhone').value.trim(),
+        address: document.getElementById('schoolAddress').value.trim(),
+        payment_ref: verifiedPayment ? verifiedPayment.utr_no : 'PENDING-VERIFY',
+        payment_gateway: 'joy.john@ybl'
+      };
+
+      let success = false;
+      let schoolCode = code;
+
+      // 1. Try local server
+      try {
+        const res = await fetch(`${API_BASE}/api/schools/apply`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        if (res.ok) {
+          const data = await res.json();
+          if (data.success) {
+            success = true;
+            schoolCode = data.school_code || code;
+          }
+        }
+      } catch (err) {
+        // Fallback to SchoolSync
+      }
+
+      // 2. Fallback to SchoolSync (Firebase Cloud & Offline Cache)
+      if (!success && window.SchoolSync) {
+        const res = await window.SchoolSync.applySchool(payload);
+        if (res.success) {
+          success = true;
+          schoolCode = res.school_code;
+        } else {
+          alert(res.message || "Failed to register school.");
+          return;
+        }
+      }
+
+      if (success) {
+        document.getElementById('applyCard').style.display = 'none';
+        document.getElementById('successBox').style.display = 'block';
+
+        document.getElementById('resSchoolCode').innerText = schoolCode;
+        document.getElementById('resSchoolPwd').innerText = schoolPwd;
+        document.getElementById('resPrincipalId').innerText = principalId;
+        document.getElementById('resPrincipalPwd').innerText = principalPwd;
+
+        document.getElementById('btnGoToSchool').href = `signin.html?school_code=${schoolCode}`;
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } else {
+        alert("Failed to register school. Please verify all fields.");
+      }
+    }
+  </script>
+</body>
+</html>
